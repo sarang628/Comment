@@ -5,65 +5,87 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sryang.torang.uistate.CommentItemUiState
-import com.sryang.torang.uistate.testCommentItemUiState
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.sryang.torang.uistate.CommentsUiState
+import com.sryang.torang.viewmodels.CommentViewModel
 
 @Composable
 fun Comments(
+    viewModel: CommentViewModel = hiltViewModel(),
+    reviewId: Int,
     profileImageServerUrl: String,
-    profileImageUrl: String,
-    list: List<CommentItemUiState>,
-    onSend: (String) -> Unit,
-    name: String
+    onSend: (String) -> Unit
 ) {
-    Box(
-        Modifier
+    val commentsUiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = reviewId, block = {
+        viewModel.loadComment(reviewId)
+    })
+
+    LaunchedEffect(key1 = commentsUiState.error, block = {
+        commentsUiState.error?.let {
+            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
+            viewModel.clearErrorMessage()
+        }
+    })
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
-    ) {
-        Column(
-            Modifier
-                .padding(bottom = 50.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "Comments", fontWeight = FontWeight.Bold)
-            CommentHelp()
-            ItemCommentList(profileImageServerUrl = profileImageServerUrl, list = list)
-        }
-        Box(modifier = Modifier.align(Alignment.BottomCenter)) {
-            HorizontalDivider(color = Color.LightGray)
-            InputComment(
-                profileImageServerUrl = profileImageServerUrl,
-                profileImageUrl = profileImageUrl,
-                onSend = onSend,
-                name = name
-            )
+    ) { padding ->
+        Box(modifier = Modifier.padding(padding)) {
+            Column(
+                Modifier
+                    .padding(bottom = 50.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Comments", fontWeight = FontWeight.Bold)
+                CommentHelp()
+                ItemCommentList(
+                    profileImageServerUrl = profileImageServerUrl,
+                    list = commentsUiState.list
+                )
+            }
+            Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+                HorizontalDivider(color = Color.LightGray)
+                InputComment(
+                    profileImageServerUrl = profileImageServerUrl,
+                    profileImageUrl = commentsUiState.profileImageUrl,
+                    onSend = onSend,
+                    name = commentsUiState.name
+                )
+            }
         }
     }
 }
 
 @Preview
 @Composable
-fun PreviewCommentScreen() {
+fun PreviewComments() {
     Comments(
         profileImageServerUrl = "",
-        profileImageUrl = "",
-        list = ArrayList<CommentItemUiState>().apply {
-            add(testCommentItemUiState())
-            add(testCommentItemUiState())
-            add(testCommentItemUiState())
-            add(testCommentItemUiState())
-        },
         onSend = {},
-        name = ""
+        reviewId = 78
     )
 }

@@ -17,11 +17,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sryang.torang.R
-import com.sryang.torang.uistate.CommentItemUiState
-import com.sryang.torang.uistate.testCommentItemUiState
+import com.sryang.torang.data.comments.Comment
+import com.sryang.torang.data.comments.testComment
 
 @Composable
-fun ItemComment(profileImageServerUrl: String, uiState: CommentItemUiState) {
+fun ItemComment(profileImageServerUrl: String, uiState: Comment) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
         AsyncImage(
             model = profileImageServerUrl + uiState.profileImageUrl,
@@ -54,5 +54,5 @@ fun ItemComment(profileImageServerUrl: String, uiState: CommentItemUiState) {
 @Preview
 @Composable
 fun PreviewItemComment() {
-    ItemComment(profileImageServerUrl = "", uiState = testCommentItemUiState())
+    ItemComment(profileImageServerUrl = "", uiState = testComment())
 }

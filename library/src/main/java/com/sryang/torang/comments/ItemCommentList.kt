@@ -14,11 +14,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sryang.torang.uistate.CommentItemUiState
-import com.sryang.torang.uistate.testCommentItemUiState
+import com.sryang.torang.data.comments.Comment
+import com.sryang.torang.data.comments.testComment
 
 @Composable
-fun ItemCommentList(profileImageServerUrl: String, list: List<CommentItemUiState>) {
+fun ItemCommentList(profileImageServerUrl: String, list: List<Comment>) {
     Box(Modifier.heightIn(min = 350.dp)) {
         LazyColumn(content = {
             items(list.size) {
@@ -46,6 +46,6 @@ fun ItemCommentList(profileImageServerUrl: String, list: List<CommentItemUiState
 fun PreviewItemCommentList() {
     ItemCommentList(
         profileImageServerUrl = "",
-        list = arrayListOf(testCommentItemUiState(), testCommentItemUiState())
+        list = arrayListOf(testComment(), testComment())
     )
 }
