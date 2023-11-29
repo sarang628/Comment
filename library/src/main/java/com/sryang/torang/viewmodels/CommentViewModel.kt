@@ -4,12 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sryang.torang.data.comments.Comment
-import com.sryang.torang.data.comments.testComment
 import com.sryang.torang.uistate.CommentsUiState
 import com.sryang.torang.usecase.comments.GetCommentsUseCase
 import com.sryang.torang.usecase.comments.GetUserUseCase
 import com.sryang.torang.usecase.comments.SendCommentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -66,6 +66,8 @@ class CommentViewModel @Inject constructor(
                         addAll(it.list)
                     })
                 }
+                _uiState.update { it.copy(onTop = true) }
+                delay(2000)
                 val comment = _uiState.value.comment
                 _uiState.update { it.copy(comment = "") }
                 val result = sendCommentUseCase.invoke(
@@ -90,5 +92,9 @@ class CommentViewModel @Inject constructor(
     fun onCommentChange(comment: String) {
         Log.d("_CommentViewModel", comment)
         _uiState.update { it.copy(comment = comment) }
+    }
+
+    fun onScrollTop() {
+        _uiState.update { it.copy(onTop = false) }
     }
 }

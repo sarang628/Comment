@@ -1,5 +1,7 @@
 package com.sryang.torang.data.comments
 
+import androidx.compose.ui.graphics.Color
+
 data class Comment(
     val commentsId: Int = Integer.MAX_VALUE,
     val userId: Int,
@@ -11,6 +13,8 @@ data class Comment(
     val isUploading: Boolean = false
 )
 
+val Comment.background: Color get() = if (isUploading) Color.LightGray else Color.Transparent
+
 fun testComment(): Comment {
     return Comment(
         userId = 0,
@@ -18,6 +22,7 @@ fun testComment(): Comment {
         date = "2",
         comment = "3",
         name = "4",
-        likeCount = 5
+        likeCount = 5,
+        isUploading = true
     )
 }
