@@ -96,7 +96,7 @@ fun CommentsModal(
     )
     ModalBottomSheet(
         sheetState = sheetState,
-        onDismissRequest = { /*TODO*/ }
+        onDismissRequest = onDismissRequest
     ) {
         Comments(
             profileImageServerUrl = profileImageServerUrl,
