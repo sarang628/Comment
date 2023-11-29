@@ -37,14 +37,20 @@ fun ItemComment(profileImageServerUrl: String, uiState: Comment) {
                 Text(text = uiState.date)
             }
             Text(text = uiState.comment)
-            Text(text = "reply")
+            Row {
+                if (uiState.isUploading) {
+                    Text(text = "Posting")
+                } else {
+                    Text(text = "Reply")
+                }
+            }
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             AsyncImage(
                 model = R.drawable.bxv,
                 contentDescription = "",
                 modifier = Modifier
-                    .size(25.dp)
+                    .size(20.dp)
             )
             Text(text = uiState.likeCount.toString())
         }

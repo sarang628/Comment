@@ -1,12 +1,14 @@
 package com.sryang.torang.data.comments
 
 data class Comment(
+    val commentsId: Int = Integer.MAX_VALUE,
     val userId: Int,
     val profileImageUrl: String,
     val date: String,
     val comment: String,
     val name: String,
-    val likeCount: Int
+    val likeCount: Int,
+    val isUploading: Boolean = false
 )
 
 fun testComment(): Comment {

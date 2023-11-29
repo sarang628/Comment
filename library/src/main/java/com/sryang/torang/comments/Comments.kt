@@ -1,9 +1,12 @@
 package com.sryang.torang.comments
 
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -72,8 +75,10 @@ fun Comments(
                 InputComment(
                     profileImageServerUrl = profileImageServerUrl,
                     profileImageUrl = commentsUiState.profileImageUrl,
-                    onSend = onSend,
-                    name = commentsUiState.name
+                    onSend = { viewModel.sendComment() },
+                    name = commentsUiState.name,
+                    input = commentsUiState.comment,
+                    onValueChange = { viewModel.onCommentChange(it) }
                 )
             }
         }

@@ -30,11 +30,11 @@ import coil.compose.AsyncImage
 fun InputComment(
     profileImageServerUrl: String,
     profileImageUrl: String,
-    onSend: (String) -> Unit,
-    name: String
+    onSend: () -> Unit,
+    name: String,
+    input: String,
+    onValueChange: (String) -> Unit
 ) {
-
-    var input by remember { mutableStateOf("") }
 
     Row(
         Modifier
@@ -52,7 +52,7 @@ fun InputComment(
         Spacer(modifier = Modifier.width(8.dp))
         BasicTextField(
             value = input,
-            onValueChange = { input = it },
+            onValueChange = onValueChange,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
@@ -68,7 +68,7 @@ fun InputComment(
                 }
             }
         )
-        Button(onClick = { onSend.invoke(input) }) {
+        Button(onClick = { onSend.invoke() }) {
             Text(text = "send")
         }
     }
@@ -79,5 +79,5 @@ fun InputComment(
 fun PreviewInputComment() {
     InputComment(profileImageServerUrl = "", profileImageUrl = "", onSend = {
 
-    }, name = "name")
+    }, name = "name", input = "", onValueChange = {})
 }

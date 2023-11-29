@@ -4,6 +4,7 @@ import com.sryang.torang.data.comments.Comment
 import com.sryang.torang.data.comments.User
 import com.sryang.torang.usecase.comments.GetCommentsUseCase
 import com.sryang.torang.usecase.comments.GetUserUseCase
+import com.sryang.torang.usecase.comments.SendCommentUseCase
 import com.sryang.torang_repository.api.ApiComment
 import com.sryang.torang_repository.data.dao.LoggedInUserDao
 import com.sryang.torang_repository.session.SessionService
@@ -17,7 +18,7 @@ import java.lang.Exception
 @Module
 class CommentModule {
     @Provides
-    fun ProvidesGetCommentsUseCase(
+    fun providesGetCommentsUseCase(
         apiComment: ApiComment,
         sessionService: SessionService
     ): GetCommentsUseCase {
@@ -32,7 +33,8 @@ class CommentModule {
                             date = it.create_date,
                             likeCount = 0,
                             profileImageUrl = it.user.profilePicUrl,
-                            userId = it.user.userId
+                            userId = it.user.userId,
+                            commentsId = it.comment_id
                         )
                     }
                 } else {
@@ -44,7 +46,7 @@ class CommentModule {
     }
 
     @Provides
-    fun ProvidesGetUserUseCase(
+    fun providesGetUserUseCase(
         loggedInUserDao: LoggedInUserDao
     ): GetUserUseCase {
         return object : GetUserUseCase {
@@ -54,6 +56,38 @@ class CommentModule {
                     return User(
                         user.profilePicUrl ?: ""
                     )
+                } else {
+                    throw Exception("로그인을 해주세요.")
+                }
+            }
+        }
+    }
+
+    @Provides
+    fun providesSendCommentUseCase(
+        apiComment: ApiComment,
+        sessionService: SessionService
+    ): SendCommentUseCase {
+        return object : SendCommentUseCase {
+            override suspend fun invoke(reviewId: Int, comment: String): Comment {
+                val auth = sessionService.getToken()
+                if (auth != null) {
+                    auth.let {
+                        val it = apiComment.addComment(
+                            auth = auth,
+                            review_id = reviewId,
+                            comment = comment
+                        )
+                        return Comment(
+                            name = it.user.userName,
+                            comment = it.comment,
+                            date = "",
+                            likeCount = 0,
+                            profileImageUrl = it.user.profilePicUrl,
+                            userId = it.user.userId,
+                            commentsId = it.comment_id
+                        )
+                    }
                 } else {
                     throw Exception("로그인을 해주세요.")
                 }

@@ -1,11 +1,13 @@
 package com.sryang.torang.comments
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,13 +19,15 @@ import androidx.compose.ui.unit.sp
 import com.sryang.torang.data.comments.Comment
 import com.sryang.torang.data.comments.testComment
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemCommentList(profileImageServerUrl: String, list: List<Comment>) {
     Box(Modifier.heightIn(min = 350.dp)) {
         LazyColumn(content = {
-            items(list.size) {
-                Column {
-                    ItemComment(profileImageServerUrl = profileImageServerUrl, uiState = list[it])
+            items(list, key = { it.commentsId })
+            {
+                Column(Modifier.animateItemPlacement()) {
+                    ItemComment(profileImageServerUrl = profileImageServerUrl, uiState = it)
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
