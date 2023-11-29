@@ -1,0 +1,112 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+
+android {
+    namespace 'com.sryang.torang'
+    compileSdk rootProject.compileSdk
+
+    defaultConfig {
+        applicationId "com.sryang.torang"
+        minSdk rootProject.minSdk
+        targetSdk rootProject.targetSdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    android.buildFeatures.buildConfig true
+
+    buildTypes {
+        debug {
+            buildConfigField "String", "SERVER_URL", '"http://sarang628.iptime.org"'
+            buildConfigField "String", "IMAGE_PORT", '"89"'
+            buildConfigField "String", "PROFILE_IMAGE_SERVER_URL", '"http://sarang628.iptime.org:89/profile_images/"'
+            buildConfigField "String", "REVIEW_IMAGE_SERVER_URL", '"http://sarang628.iptime.org:89/review_images/"'
+            buildConfigField "String", "RESTAURANT_IMAGE_SERVER_URL", '"http://sarang628.iptime.org:89/restaurant_images/"'
+            buildConfigField "String", "MENU_IMAGE_SERVER_URL", '"http://sarang628.iptime.org:89/menu_images/"'
+        }
+
+        release {
+            buildConfigField "String", "SERVER_URL", '"http://sarang628.iptime.org"'
+            buildConfigField "String", "IMAGE_PORT", '"89"'
+            buildConfigField "String", "PROFILE_IMAGE_SERVER_URL", '"http://sarang628.iptime.org:89/profile_images/"'
+            buildConfigField "String", "REVIEW_IMAGE_SERVER_URL", '"http://sarang628.iptime.org:89/review_images/"'
+            buildConfigField "String", "RESTAURANT_IMAGE_SERVER_URL", '"http://sarang628.iptime.org:89/restaurant_images/"'
+            buildConfigField "String", "MENU_IMAGE_SERVER_URL", '"http://sarang628.iptime.org:89/menu_images/"'
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.6"
+    }
+
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+
+    /** HILT */
+    implementation "com.google.dagger:hilt-android:$hiltVersion"
+    kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
+    implementation "androidx.hilt:hilt-navigation-compose:1.0.0" // hiltViewModel
+
+    /** compose */
+    def composeBom = platform('androidx.compose:compose-bom:2023.04.01')
+    implementation composeBom
+    androidTestImplementation composeBom
+    implementation 'androidx.compose.ui:ui' //없으면 @Composable import 안됨
+    implementation 'androidx.compose.ui:ui-tooling-preview' // Android Studio Preview support
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    implementation 'androidx.compose.material3:material3:1.2.0-alpha10' //JetNews Main 따라하기
+    implementation "androidx.compose.material3:material3-window-size-class"
+    implementation "androidx.navigation:navigation-compose:$nav_version"
+
+    /** Room */
+    def room_version = "2.5.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    // To use Kotlin annotation processing tool (kapt)
+    implementation "androidx.room:room-rxjava2:$room_version" // optional - RxJava2 support for Room
+    implementation "androidx.room:room-rxjava3:$room_version" // optional - RxJava3 support for Room
+    implementation "androidx.room:room-guava:$room_version"
+    // optional - Guava support for Room, including Optional and ListenableFuture
+    testImplementation "androidx.room:room-testing:$room_version" // optional - Test helpers
+    implementation "androidx.room:room-paging:$room_version" // optional - Paging 3 Integration
+    implementation "androidx.room:room-ktx:$room_version"
+
+    /** Retrofit 리뷰 추가 시 multipart 때문에 추가 뷰모델 작업해야 함. */
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
+
+    implementation project(path: ':library')
+    implementation "com.github.sarang628:Theme:$themeVersion"
+    implementation "com.github.sarang628:TorangRepository:$torangRepositoryVersion"
+}
