@@ -2,6 +2,7 @@ package com.sryang.torang.comments
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -57,7 +58,8 @@ fun Comments(
             Column(
                 Modifier
                     .padding(bottom = 50.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = "Comments", fontWeight = FontWeight.Bold)
