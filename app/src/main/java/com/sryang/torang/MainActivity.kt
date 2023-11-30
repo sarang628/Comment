@@ -39,8 +39,7 @@ class MainActivity : ComponentActivity() {
                         profileImageServerUrl = BuildConfig.PROFILE_IMAGE_SERVER_URL,
                         reviewId = 80, onDismissRequest = {}
                     )
-
-                    //LoginRepositoryTest(loginRepository = loginRepository)
+//                    LoginRepositoryTest(loginRepository = loginRepository)
                 }
             }
         }

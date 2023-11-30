@@ -10,5 +10,7 @@ data class CommentsUiState(
     val profileImageUrl: String = "",
     val error: String? = null,
     val comment: String = "",
-    val onTop: Boolean = false
-)
+    val onTop: Boolean = false,
+    val myId: Int? = null
+) {
+}

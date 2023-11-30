@@ -9,8 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,14 +25,23 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sryang.torang.R
 import com.sryang.torang.data.comments.Comment
-import com.sryang.torang.data.comments.background
 import com.sryang.torang.data.comments.testComment
 
 @Composable
 fun ItemComment(profileImageServerUrl: String, uiState: Comment) {
-    Row(Modifier.fillMaxWidth().background(
-        uiState.background
-    ), horizontalArrangement = Arrangement.End) {
+    var offset by remember { mutableStateOf(0f) }
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .background(
+                color =
+                if (uiState.isUploading) {
+                    Color.LightGray
+                } else {
+                    MaterialTheme.colorScheme.background
+                }
+            ), horizontalArrangement = Arrangement.End
+    ) {
         AsyncImage(
             model = profileImageServerUrl + uiState.profileImageUrl,
             contentDescription = "",

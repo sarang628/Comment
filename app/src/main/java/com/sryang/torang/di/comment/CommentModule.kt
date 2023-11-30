@@ -2,6 +2,7 @@ package com.sryang.torang.di.comment
 
 import com.sryang.torang.data.comments.Comment
 import com.sryang.torang.data.comments.User
+import com.sryang.torang.usecase.comments.DeleteCommentUseCase
 import com.sryang.torang.usecase.comments.GetCommentsUseCase
 import com.sryang.torang.usecase.comments.GetUserUseCase
 import com.sryang.torang.usecase.comments.SendCommentUseCase
@@ -54,7 +55,8 @@ class CommentModule {
                 val user = loggedInUserDao.getLoggedInUser1()
                 if (user != null) {
                     return User(
-                        user.profilePicUrl ?: ""
+                        user.profilePicUrl ?: "",
+                        userId = user.userId
                     )
                 } else {
                     throw Exception("로그인을 해주세요.")
@@ -91,6 +93,15 @@ class CommentModule {
                 } else {
                     throw Exception("로그인을 해주세요.")
                 }
+            }
+        }
+    }
+
+    @Provides
+    fun provideDeleteCommentUseCase(apiComment: ApiComment): DeleteCommentUseCase {
+        return object : DeleteCommentUseCase {
+            override suspend fun delete(commentId: Int) {
+                apiComment.deleteComment(commentId)
             }
         }
     }
