@@ -38,7 +38,8 @@ fun ItemComment(profileImageServerUrl: String, uiState: Comment) {
                 if (uiState.isUploading) {
                     Color.LightGray
                 } else {
-                    MaterialTheme.colorScheme.background
+                    //MaterialTheme.colorScheme.background
+                    Color.Transparent
                 }
             ), horizontalArrangement = Arrangement.End
     ) {

@@ -66,7 +66,10 @@ fun ItemCommentList(
         }
     })
 
-    Box(Modifier.heightIn(min = 350.dp).fillMaxWidth()) {
+    Box(
+        Modifier
+            .heightIn(min = 350.dp)
+            .fillMaxWidth()) {
         LazyColumn(
             state = listState,
             content = {
@@ -118,11 +121,13 @@ fun ItemCommentList(
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = "",
-                                        modifier = Modifier.align(Alignment.CenterEnd)
-                                    )
+                                    if (state.targetValue == DismissValue.DismissedToStart) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "",
+                                            modifier = Modifier.align(Alignment.CenterEnd)
+                                        )
+                                    }
                                 }
                             },
                             dismissContent = {
