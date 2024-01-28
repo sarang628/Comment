@@ -19,6 +19,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import com.sarang.torang.data.comments.Comment
@@ -50,13 +51,14 @@ fun ItemComment(uiState: Comment) {
                 .clip(CircleShape),
         )
 
-        Text(text = uiState.name, Modifier.layoutId("name"))
-        Text(text = uiState.date, Modifier.layoutId("date"), color = Color.Gray)
-        Text(text = uiState.comment, Modifier.layoutId("comment"))
+        Text(text = uiState.name, Modifier.layoutId("name"), fontSize = 13.sp)
+        Text(text = uiState.date, Modifier.layoutId("date"), color = Color.Gray, fontSize = 13.sp)
+        Text(text = uiState.comment, Modifier.layoutId("comment"), fontSize = 13.sp)
         Text(
             text = if (uiState.isUploading) "Posting" else "Reply",
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.layoutId("replyAndPosting")
+            modifier = Modifier.layoutId("replyAndPosting"), fontSize = 13.sp,
+            color = Color.Gray
         )
 
         Icon(
@@ -99,12 +101,12 @@ fun ItemCommentConstraintSet(): ConstraintSet {
 
         constrain(comment) {
             start.linkTo(name.start)
-            top.linkTo(date.bottom, 8.dp)
+            top.linkTo(date.bottom, 4.dp)
         }
 
         constrain(replyAndPosting) {
             start.linkTo(name.start)
-            top.linkTo(comment.bottom, 6.dp)
+            top.linkTo(comment.bottom, 4.dp)
         }
 
         constrain(favorite) { end.linkTo(parent.end) }
@@ -122,5 +124,5 @@ fun ItemCommentConstraintSet(): ConstraintSet {
 @Preview
 @Composable
 fun PreviewItemComment() {
-    ItemComment( uiState = testComment())
+    ItemComment(uiState = testComment())
 }

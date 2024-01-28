@@ -34,7 +34,7 @@ class CommentModule {
                             comment = it.comment,
                             date = it.create_date,
                             likeCount = 0,
-                            profileImageUrl = it.user.profilePicUrl,
+                            profileImageUrl = BuildConfig.PROFILE_IMAGE_SERVER_URL + it.user.profilePicUrl,
                             userId = it.user.userId,
                             commentsId = it.comment_id
                         )

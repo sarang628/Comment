@@ -14,6 +14,7 @@ import com.google.samples.apps.sunflower.ui.TorangTheme
 import com.sarang.torang.comments.CommentsModal
 import com.sarang.torang.comments.PreviewComments
 import com.sryang.torang_repository.repository.LoginRepository
+import com.sryang.torang_repository.repository.LoginRepositoryTest
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
                         reviewId = 80,
                         onDismissRequest = {},
                     )
-                    //LoginRepositoryTest(loginRepository = loginRepository)
+//                    LoginRepositoryTest(loginRepository = loginRepository)
                 }
             }
         }

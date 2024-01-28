@@ -68,7 +68,8 @@ fun ItemCommentList(
     Box(
         Modifier
             .heightIn(min = 350.dp)
-            .fillMaxWidth()) {
+            .fillMaxWidth()
+    ) {
         LazyColumn(
             state = listState,
             content = {
@@ -93,7 +94,7 @@ fun ItemCommentList(
                                 val color by animateColorAsState(
                                     when (state.targetValue) {
                                         DismissValue.Default -> Color.Transparent
-                                        DismissValue.DismissedToStart -> Color.Red
+                                        DismissValue.DismissedToStart -> MaterialTheme.colorScheme.secondary
                                         else -> Color.Transparent
                                     }, label = ""
                                 )
