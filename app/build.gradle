@@ -8,11 +8,11 @@ plugins {
 
 
 android {
-    namespace 'com.sryang.torang'
+    namespace 'com.sarang.torang'
     compileSdk rootProject.compileSdk
 
     defaultConfig {
-        applicationId "com.sryang.torang"
+        applicationId "com.sarang.torang"
         minSdk rootProject.minSdk
         targetSdk rootProject.targetSdk
         versionCode 1
