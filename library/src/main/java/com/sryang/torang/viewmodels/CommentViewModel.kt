@@ -10,14 +10,11 @@ import com.sryang.torang.usecase.comments.GetCommentsUseCase
 import com.sryang.torang.usecase.comments.GetUserUseCase
 import com.sryang.torang.usecase.comments.SendCommentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 import javax.inject.Inject
 
 @HiltViewModel

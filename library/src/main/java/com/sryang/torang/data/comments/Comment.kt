@@ -19,10 +19,10 @@ fun testComment(): Comment {
     return Comment(
         userId = 0,
         profileImageUrl = "1/2023-09-14/10_44_39_302.jpeg",
-        date = "2",
-        comment = "3",
-        name = "4",
+        date = "1d",
+        comment = "comment",
+        name = "name",
         likeCount = 5,
-        isUploading = true
+        isUploading = false
     )
 }
