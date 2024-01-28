@@ -1,5 +1,6 @@
 package com.sarang.torang.di.comment
 
+import com.sarang.torang.BuildConfig
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.User
 import com.sarang.torang.usecase.comments.DeleteCommentUseCase
@@ -55,7 +56,7 @@ class CommentModule {
                 val user = loggedInUserDao.getLoggedInUser1()
                 if (user != null) {
                     return User(
-                        user.profilePicUrl ?: "",
+                        BuildConfig.PROFILE_IMAGE_SERVER_URL + user.profilePicUrl,
                         userId = user.userId
                     )
                 } else {

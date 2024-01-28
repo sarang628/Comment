@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun InputComment(
-    profileImageServerUrl: String,
     profileImageUrl: String,
     onSend: () -> Unit,
     name: String,
@@ -38,7 +37,7 @@ fun InputComment(
             .padding(top = 7.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         TorangAsyncImage(
-            model = profileImageServerUrl + profileImageUrl,
+            model = profileImageUrl,
             errorIconSize = 20.dp,
             progressSize = 20.dp,
             modifier = Modifier
@@ -73,7 +72,7 @@ fun InputComment(
 @Preview
 @Composable
 fun PreviewInputComment() {
-    InputComment(profileImageServerUrl = "", profileImageUrl = "", onSend = {
+    InputComment(profileImageUrl = "", onSend = {
 
     }, name = "name", input = "", onValueChange = {})
 }

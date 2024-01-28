@@ -49,7 +49,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun ItemCommentList(
     myId: Int?,
-    profileImageServerUrl: String,
     list: List<Comment>,
     onTop: Boolean,
     onScrollTop: () -> Unit,
@@ -132,7 +131,6 @@ fun ItemCommentList(
                             },
                             dismissContent = {
                                 ItemComment(
-                                    profileImageServerUrl = profileImageServerUrl,
                                     uiState = comment
                                 )
                             },
@@ -159,7 +157,6 @@ fun ItemCommentList(
 @Composable
 fun PreviewItemCommentList() {
     ItemCommentList(
-        profileImageServerUrl = "",
         list = arrayListOf(testComment(), testComment()),
         onTop = false,
         onScrollTop = {},

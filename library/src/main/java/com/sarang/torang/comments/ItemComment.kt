@@ -25,7 +25,7 @@ import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.testComment
 
 @Composable
-fun ItemComment(profileImageServerUrl: String, uiState: Comment) {
+fun ItemComment(uiState: Comment) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,7 +41,7 @@ fun ItemComment(profileImageServerUrl: String, uiState: Comment) {
         constraintSet = ItemCommentConstraintSet()
     ) {
         TorangAsyncImage(
-            model = profileImageServerUrl + uiState.profileImageUrl,
+            model = uiState.profileImageUrl,
             errorIconSize = 20.dp,
             progressSize = 20.dp,
             modifier = Modifier
@@ -122,5 +122,5 @@ fun ItemCommentConstraintSet(): ConstraintSet {
 @Preview
 @Composable
 fun PreviewItemComment() {
-    ItemComment(profileImageServerUrl = "", uiState = testComment())
+    ItemComment( uiState = testComment())
 }

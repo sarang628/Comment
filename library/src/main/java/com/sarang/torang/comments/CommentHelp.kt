@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 @Preview
 @Composable
 fun CommentHelp() {
-    Column(Modifier.padding(top = 5.dp, bottom = 15.dp)) {
+    Column(Modifier.padding(top = 5.dp, bottom = 15.dp, start = 10.dp, end = 10.dp)) {
         Text(
             text = "this reel is shared publicly to Facebook. Your interactions can also appear..",
         )

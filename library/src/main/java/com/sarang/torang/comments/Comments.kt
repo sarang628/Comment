@@ -49,7 +49,6 @@ import kotlin.math.roundToInt
 fun Comments(
     viewModel: CommentViewModel = hiltViewModel(),
     reviewId: Int,
-    profileImageServerUrl: String
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -58,7 +57,6 @@ fun Comments(
     })
 
     Comments(
-        profileImageServerUrl = profileImageServerUrl,
         uiState = uiState,
         clearErrorMessage = { viewModel.clearErrorMessage() },
         onUndo = { viewModel.onUndo(it) },
@@ -70,7 +68,6 @@ fun Comments(
 
 @Composable
 fun Comments(
-    profileImageServerUrl: String,
     uiState: CommentsUiState,
     clearErrorMessage: () -> Unit,
     onScrollTop: () -> Unit,
@@ -91,8 +88,7 @@ fun Comments(
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
+            .fillMaxWidth(),
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
             Column(
@@ -104,7 +100,6 @@ fun Comments(
                 Text(text = "Comments", fontWeight = FontWeight.Bold)
                 CommentHelp()
                 ItemCommentList(
-                    profileImageServerUrl = profileImageServerUrl,
                     list = uiState.list,
                     onTop = uiState.onTop,
                     onScrollTop = { onScrollTop() },
@@ -117,10 +112,13 @@ fun Comments(
                     myId = uiState.myId
                 )
             }
-            Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(start = 10.dp, end = 10.dp)
+            ) {
                 HorizontalDivider(color = Color.LightGray)
                 InputComment(
-                    profileImageServerUrl = profileImageServerUrl,
                     profileImageUrl = uiState.profileImageUrl,
                     onSend = { sendComment() },
                     name = uiState.name,
@@ -135,7 +133,6 @@ fun Comments(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsModal(
-    profileImageServerUrl: String,
     reviewId: Int,
     onDismissRequest: () -> Unit
 ) {
@@ -147,7 +144,6 @@ fun CommentsModal(
         onDismissRequest = onDismissRequest
     ) {
         Comments(
-            profileImageServerUrl = profileImageServerUrl,
             reviewId = reviewId
         )
     }
@@ -157,7 +153,6 @@ fun CommentsModal(
 @Composable
 fun PreviewComments() {
     Comments(
-        profileImageServerUrl = "",
         onScrollTop = {},
         onCommentChange = {},
         onDelete = {},

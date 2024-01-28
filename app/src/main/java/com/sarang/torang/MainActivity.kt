@@ -33,7 +33,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     CommentsModal(
-                        profileImageServerUrl = BuildConfig.PROFILE_IMAGE_SERVER_URL,
                         reviewId = 80,
                         onDismissRequest = {},
                     )
