@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sarang.torang.data.comments.testComment
 import com.sarang.torang.uistate.CommentsUiState
+import com.sarang.torang.uistate.isLogin
 import com.sarang.torang.viewmodels.CommentViewModel
 import kotlin.math.roundToInt
 
@@ -112,20 +113,21 @@ fun Comments(
                     myId = uiState.myId
                 )
             }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(start = 10.dp, end = 10.dp)
-            ) {
-                HorizontalDivider(color = Color.LightGray)
-                InputComment(
-                    profileImageUrl = uiState.profileImageUrl,
-                    onSend = { sendComment() },
-                    name = uiState.name,
-                    input = uiState.comment,
-                    onValueChange = { onCommentChange(it) }
-                )
-            }
+            if (uiState.isLogin)
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(start = 10.dp, end = 10.dp)
+                ) {
+                    HorizontalDivider(color = Color.LightGray)
+                    InputComment(
+                        profileImageUrl = uiState.profileImageUrl,
+                        onSend = { sendComment() },
+                        name = uiState.name,
+                        input = uiState.comment,
+                        onValueChange = { onCommentChange(it) }
+                    )
+                }
         }
     }
 }

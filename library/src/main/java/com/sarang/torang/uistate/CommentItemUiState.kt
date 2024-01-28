@@ -12,5 +12,6 @@ data class CommentsUiState(
     val comment: String = "",
     val onTop: Boolean = false,
     val myId: Int? = null
-) {
-}
+)
+
+val CommentsUiState.isLogin get() = myId != null
