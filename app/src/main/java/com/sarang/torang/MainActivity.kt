@@ -13,8 +13,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.google.samples.apps.sunflower.ui.TorangTheme
 import com.sarang.torang.comments.CommentsModal
 import com.sarang.torang.comments.PreviewComments
-import com.sryang.torang_repository.repository.LoginRepository
-import com.sryang.torang_repository.repository.LoginRepositoryTest
+import com.sarang.torang.repository.LoginRepository
+import com.sarang.torang.repository.LoginRepositoryTest
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
