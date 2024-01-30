@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
                         reviewId = 80,
                         onDismissRequest = {},
                     )
-//                    LoginRepositoryTest(loginRepository = loginRepository)
+                    //LoginRepositoryTest(loginRepository = loginRepository)
                 }
             }
         }
