@@ -4,3 +4,6 @@
 [submodule "app/src/main/java/com/sarang/torang/di/comment_di"]
 	path = app/src/main/java/com/sarang/torang/di/comment_di
 	url = https://github.com/sarang628/comment_di.git
+[submodule "app/src/main/java/com/sarang/torang/di/repository"]
+	path = app/src/main/java/com/sarang/torang/di/repository
+	url = https://github.com/sarang628/repository
