@@ -9,6 +9,7 @@ import com.sarang.torang.usecase.comments.DeleteCommentUseCase
 import com.sarang.torang.usecase.comments.GetCommentsUseCase
 import com.sarang.torang.usecase.comments.GetUserUseCase
 import com.sarang.torang.usecase.comments.SendCommentUseCase
+import com.sarang.torang.usecase.comments.UpdateCommentLikeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,8 @@ class CommentViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val getCommentsUseCase: GetCommentsUseCase,
     private val sendCommentUseCase: SendCommentUseCase,
-    private val deleteCommentUseCase: DeleteCommentUseCase
+    private val deleteCommentUseCase: DeleteCommentUseCase,
+    private val updateCommentLikeUseCase: UpdateCommentLikeUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CommentsUiState())
     val uiState = _uiState.asStateFlow()
@@ -123,6 +125,8 @@ class CommentViewModel @Inject constructor(
     }
 
     fun onFavorite(commentId: Int) {
-
+        viewModelScope.launch {
+            updateCommentLikeUseCase.invoke(commentId)
+        }
     }
 }
