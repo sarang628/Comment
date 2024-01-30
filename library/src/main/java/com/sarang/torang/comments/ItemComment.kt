@@ -1,6 +1,7 @@
 package com.sarang.torang.comments
 
 import TorangAsyncImage
+import android.widget.ImageButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,12 +10,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,11 +25,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.constraintlayout.compose.Dimension
 import com.sarang.torang.data.comments.Comment
+import com.sarang.torang.data.comments.favoriteIcon
 import com.sarang.torang.data.comments.testComment
 
 @Composable
-fun ItemComment(uiState: Comment) {
+fun ItemComment(uiState: Comment, onFavorite: (() -> Unit)? = null) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
@@ -61,14 +66,15 @@ fun ItemComment(uiState: Comment) {
             color = Color.Gray
         )
 
-        Icon(
-            imageVector = Icons.Default.FavoriteBorder,
-            contentDescription = "",
-            modifier = Modifier
-                .size(40.dp)
-                .padding(10.dp)
-                .layoutId("favorite")
-        )
+        IconButton(modifier = Modifier
+            .layoutId("favorite"), onClick = { onFavorite?.invoke() }) {
+            Icon(
+                modifier = Modifier
+                    .size(20.dp),
+                imageVector = uiState.favoriteIcon,
+                contentDescription = "",
+            )
+        }
 
         Text(text = uiState.likeCount.toString(), Modifier.layoutId("likeCount"))
     }
@@ -102,6 +108,8 @@ fun ItemCommentConstraintSet(): ConstraintSet {
         constrain(comment) {
             start.linkTo(name.start)
             top.linkTo(date.bottom, 4.dp)
+            end.linkTo(favorite.start)
+            width = Dimension.fillToConstraints
         }
 
         constrain(replyAndPosting) {

@@ -121,4 +121,8 @@ class CommentViewModel @Inject constructor(
     fun onUndo(commentId: Int) {
         jobs.put(commentId, false)
     }
+
+    fun onFavorite(commentId: Int) {
+
+    }
 }

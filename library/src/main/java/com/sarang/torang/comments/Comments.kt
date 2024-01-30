@@ -64,7 +64,8 @@ fun Comments(
         onDelete = { viewModel.onDelete(it) },
         onCommentChange = { viewModel.onCommentChange(it) },
         onScrollTop = { viewModel.onScrollTop() },
-        sendComment = { viewModel.sendComment() })
+        sendComment = { viewModel.sendComment() },
+        onFavorite = {viewModel.onFavorite(it)})
 }
 
 @Composable
@@ -75,7 +76,8 @@ fun Comments(
     onDelete: (Int) -> Unit,
     onUndo: (Int) -> Unit,
     sendComment: () -> Unit,
-    onCommentChange: (String) -> Unit
+    onCommentChange: (String) -> Unit,
+    onFavorite: ((Int) -> Unit)? = null
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -110,7 +112,8 @@ fun Comments(
                     onUndo = {
                         onUndo(it)
                     },
-                    myId = uiState.myId
+                    myId = uiState.myId,
+                    onFavorite = onFavorite
                 )
             }
             if (uiState.isLogin)
