@@ -14,9 +14,9 @@ data class Comment(
     val date: String,
     val comment: String,
     val name: String,
-    val likeCount: Int,
     val isFavorite: Boolean = false,
-    val isUploading: Boolean = false
+    val isUploading: Boolean = false,
+    val commentLikeCount : Int
 )
 
 val Comment.background: Color get() = if (isUploading) Color.LightGray else Color.Transparent
@@ -30,7 +30,7 @@ fun testComment(): Comment {
         comment = "comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment",
 //        comment = "comment",
         name = "name",
-        likeCount = 5,
-        isUploading = false
+        isUploading = false,
+        commentLikeCount = 20
     )
 }

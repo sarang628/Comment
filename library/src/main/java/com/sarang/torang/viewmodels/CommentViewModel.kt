@@ -62,10 +62,10 @@ class CommentViewModel @Inject constructor(
                                 userId = 0,
                                 profileImageUrl = it.profileImageUrl,
                                 comment = it.comment,
-                                date = "2023",
-                                likeCount = 0,
+                                date = "",
                                 name = it.name,
-                                isUploading = true
+                                isUploading = true,
+                                commentLikeCount = 0
                             )
                         )
                         addAll(it.list)

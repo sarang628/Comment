@@ -76,7 +76,7 @@ fun ItemComment(uiState: Comment, onFavorite: (() -> Unit)? = null) {
             )
         }
 
-        Text(text = uiState.likeCount.toString(), Modifier.layoutId("likeCount"))
+        Text(text = uiState.commentLikeCount.toString(), Modifier.layoutId("likeCount"))
     }
 }
 
