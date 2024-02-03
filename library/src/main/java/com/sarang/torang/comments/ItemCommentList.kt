@@ -54,7 +54,8 @@ fun ItemCommentList(
     onScrollTop: () -> Unit,
     onDelete: (Int) -> Unit,
     onUndo: (Int) -> Unit,
-    onFavorite: ((Int) -> Unit)? = null
+    onFavorite: ((Int) -> Unit)? = null,
+    onReply: (() -> Unit)? = null
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -134,7 +135,8 @@ fun ItemCommentList(
                             dismissContent = {
                                 ItemComment(
                                     uiState = comment,
-                                    onFavorite = { onFavorite?.invoke(comment.commentsId) }
+                                    onFavorite = { onFavorite?.invoke(comment.commentsId) },
+                                    onReply = { onReply?.invoke() }
                                 )
                             },
                             directions = if (comment.userId == myId) setOf(DismissDirection.EndToStart) else setOf()

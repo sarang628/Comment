@@ -3,6 +3,7 @@ package com.sarang.torang.comments
 import TorangAsyncImage
 import android.widget.ImageButton
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,7 +32,11 @@ import com.sarang.torang.data.comments.favoriteIcon
 import com.sarang.torang.data.comments.testComment
 
 @Composable
-fun ItemComment(uiState: Comment, onFavorite: (() -> Unit)? = null) {
+fun ItemComment(
+    uiState: Comment,
+    onFavorite: (() -> Unit)? = null,
+    onReply: (() -> Unit)? = null
+) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
@@ -62,7 +67,9 @@ fun ItemComment(uiState: Comment, onFavorite: (() -> Unit)? = null) {
         Text(
             text = if (uiState.isUploading) "Posting" else "Reply",
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.layoutId("replyAndPosting"), fontSize = 13.sp,
+            modifier = Modifier
+                .layoutId("replyAndPosting")
+                .clickable { onReply?.invoke() }, fontSize = 13.sp,
             color = Color.Gray
         )
 
