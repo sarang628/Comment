@@ -14,13 +14,17 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 
 @Composable
 fun InputComment(
@@ -30,7 +34,13 @@ fun InputComment(
     input: String,
     onValueChange: (String) -> Unit
 ) {
-
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        // 다이얼로그 올라오는 도중에 키보드가 올라오면
+        // 다이얼로그 애니메이션이 잠시 멈춰 딜레이 추가
+        delay(200)
+        focusRequester.requestFocus()
+    }
     Row(
         Modifier
             .height(50.dp)
@@ -50,7 +60,9 @@ fun InputComment(
             onValueChange = onValueChange,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
+                .weight(1f)
+                .focusRequester(focusRequester)
+            ,
             decorationBox = { innerTextField ->
                 Box() {
                     if (input.isEmpty()) {
