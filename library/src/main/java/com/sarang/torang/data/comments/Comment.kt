@@ -14,13 +14,14 @@ data class Comment(
     val date: String,
     val comment: String,
     val name: String,
-    val isFavorite: Boolean = false,
     val isUploading: Boolean = false,
+    val commentLikeId: Int? = null,
     val commentLikeCount : Int
 )
 
 val Comment.background: Color get() = if (isUploading) Color.LightGray else Color.Transparent
 val Comment.favoriteIcon: ImageVector get() = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+val Comment.isFavorite: Boolean get() = commentLikeId != null
 
 fun testComment(): Comment {
     return Comment(

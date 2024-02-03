@@ -4,12 +4,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sarang.torang.data.comments.Comment
+import com.sarang.torang.data.comments.isFavorite
 import com.sarang.torang.uistate.CommentsUiState
+import com.sarang.torang.usecase.comments.AddCommentLikeUseCase
+import com.sarang.torang.usecase.comments.DeleteCommentLikeUseCase
 import com.sarang.torang.usecase.comments.DeleteCommentUseCase
 import com.sarang.torang.usecase.comments.GetCommentsUseCase
 import com.sarang.torang.usecase.comments.GetUserUseCase
 import com.sarang.torang.usecase.comments.SendCommentUseCase
-import com.sarang.torang.usecase.comments.UpdateCommentLikeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +26,8 @@ class CommentViewModel @Inject constructor(
     private val getCommentsUseCase: GetCommentsUseCase,
     private val sendCommentUseCase: SendCommentUseCase,
     private val deleteCommentUseCase: DeleteCommentUseCase,
-    private val updateCommentLikeUseCase: UpdateCommentLikeUseCase
+    private val addCommentUseCase: AddCommentLikeUseCase,
+    private val deleteCommentLikeUseCaes: DeleteCommentLikeUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CommentsUiState())
     val uiState = _uiState.asStateFlow()
@@ -125,8 +128,53 @@ class CommentViewModel @Inject constructor(
     }
 
     fun onFavorite(commentId: Int) {
-        viewModelScope.launch {
-            updateCommentLikeUseCase.invoke(commentId)
+        // 현재 좋아요 상태인지 확인
+        val comment = uiState.value.list.find { it.commentsId == commentId } ?: return
+        if (comment.isFavorite) {
+            // 좋아요 삭제 요청
+            viewModelScope.launch {
+                try {
+                    deleteCommentLikeUseCaes.invoke(commentId)
+                    // 좋아요 UI 업데이트
+                    _uiState.update {
+                        it.copy(
+                            list = it.list.map {
+                                if (it.commentsId == comment.commentsId)
+                                    comment.copy(
+                                        commentLikeId = null,
+                                        commentLikeCount = it.commentLikeCount - 1
+                                    )
+                                else
+                                    it
+                            }
+                        )
+                    }
+                } catch (e: Exception) {
+                }
+            }
+        } else {
+            //좋아요 요청
+            viewModelScope.launch {
+                try {
+                    val result = addCommentUseCase.invoke(commentId)
+                    //좋아요 UI 업데이트
+                    _uiState.update {
+                        it.copy(
+                            list = it.list.map {
+                                if (it.commentsId == comment.commentsId)
+                                    comment.copy(
+                                        commentLikeId = result,
+                                        commentLikeCount = it.commentLikeCount + 1
+                                    )
+                                else
+                                    it
+                            }
+                        )
+                    }
+                } catch (e: Exception) {
+
+                }
+            }
         }
     }
 }
