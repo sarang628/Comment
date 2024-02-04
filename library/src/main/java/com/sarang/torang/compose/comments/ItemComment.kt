@@ -4,7 +4,9 @@ import TorangAsyncImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -91,6 +93,7 @@ fun ItemCommentConstraintSet(): ConstraintSet {
         val replyAndPosting = createRefFor("replyAndPosting")
         val favorite = createRefFor("favorite")
         val likeCount = createRefFor("likeCount")
+        val replies = createRefFor("replies")
 
         constrain(profileImage) {
             start.linkTo(parent.start, 8.dp)
@@ -125,6 +128,10 @@ fun ItemCommentConstraintSet(): ConstraintSet {
             top.linkTo(favorite.bottom)
             start.linkTo(favorite.start)
             end.linkTo(favorite.end)
+        }
+
+        constrain(replies) {
+            top.linkTo(replyAndPosting.bottom)
         }
 
     }

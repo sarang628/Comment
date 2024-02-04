@@ -1,6 +1,5 @@
 package com.sarang.torang.data.comments
 
-import android.graphics.drawable.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
