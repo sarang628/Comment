@@ -1,4 +1,4 @@
-package com.sarang.torang.comments
+package com.sarang.torang.compose.comments
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 
 @Preview
 @Composable
-fun CommentHelp() {
-    Column(Modifier.padding(top = 5.dp, bottom = 15.dp, start = 10.dp, end = 10.dp)) {
+fun CommentHelp(modifie: Modifier = Modifier) {
+    Column(modifie.padding(top = 5.dp, bottom = 15.dp, start = 10.dp, end = 10.dp)) {
         Text(
             text = "this reel is shared publicly to Facebook. Your interactions can also appear..",
         )

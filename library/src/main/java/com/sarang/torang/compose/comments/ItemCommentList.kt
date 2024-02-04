@@ -1,4 +1,4 @@
-package com.sarang.torang.comments
+package com.sarang.torang.compose.comments
 
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ItemCommentList(
+    modifier: Modifier = Modifier,
     myId: Int?,
     list: List<Comment>,
     onTop: Boolean,
@@ -55,7 +56,7 @@ fun ItemCommentList(
     onDelete: (Int) -> Unit,
     onUndo: (Int) -> Unit,
     onFavorite: ((Int) -> Unit)? = null,
-    onReply: (() -> Unit)? = null
+    onReply: ((Comment) -> Unit)? = null
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -68,7 +69,7 @@ fun ItemCommentList(
     })
 
     Box(
-        Modifier
+        modifier
             .heightIn(min = 350.dp)
             .fillMaxWidth()
     ) {
@@ -134,9 +135,9 @@ fun ItemCommentList(
                             },
                             dismissContent = {
                                 ItemComment(
-                                    uiState = comment,
+                                    comment = comment,
                                     onFavorite = { onFavorite?.invoke(comment.commentsId) },
-                                    onReply = { onReply?.invoke() }
+                                    onReply = { onReply?.invoke(comment) }
                                 )
                             },
                             directions = if (comment.userId == myId) setOf(DismissDirection.EndToStart) else setOf()

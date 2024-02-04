@@ -1,15 +1,11 @@
-package com.sarang.torang.comments
+package com.sarang.torang.compose.comments
 
 import TorangAsyncImage
-import android.widget.ImageButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +28,7 @@ import com.sarang.torang.data.comments.testComment
 
 @Composable
 fun ItemComment(
-    uiState: Comment,
+    comment: Comment,
     onFavorite: (() -> Unit)? = null,
     onReply: (() -> Unit)? = null
 ) {
@@ -42,7 +37,7 @@ fun ItemComment(
             .fillMaxWidth()
             .background(
                 color =
-                if (uiState.isUploading) {
+                if (comment.isUploading) {
                     MaterialTheme.colorScheme.surfaceBright
                 } else {
                     //MaterialTheme.colorScheme.background
@@ -52,7 +47,7 @@ fun ItemComment(
         constraintSet = ItemCommentConstraintSet()
     ) {
         TorangAsyncImage(
-            model = uiState.profileImageUrl,
+            model = comment.profileImageUrl,
             errorIconSize = 20.dp,
             progressSize = 20.dp,
             modifier = Modifier
@@ -61,11 +56,11 @@ fun ItemComment(
                 .clip(CircleShape),
         )
 
-        Text(text = uiState.name, Modifier.layoutId("name"), fontSize = 13.sp)
-        Text(text = uiState.date, Modifier.layoutId("date"), color = Color.Gray, fontSize = 13.sp)
-        Text(text = uiState.comment, Modifier.layoutId("comment"), fontSize = 13.sp)
+        Text(text = comment.name, Modifier.layoutId("name"), fontSize = 13.sp)
+        Text(text = comment.date, Modifier.layoutId("date"), color = Color.Gray, fontSize = 13.sp)
+        Text(text = comment.comment, Modifier.layoutId("comment"), fontSize = 13.sp)
         Text(
-            text = if (uiState.isUploading) "Posting" else "Reply",
+            text = if (comment.isUploading) "Posting" else "Reply",
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .layoutId("replyAndPosting")
@@ -78,12 +73,12 @@ fun ItemComment(
             Icon(
                 modifier = Modifier
                     .size(20.dp),
-                imageVector = uiState.favoriteIcon,
+                imageVector = comment.favoriteIcon,
                 contentDescription = "",
             )
         }
 
-        Text(text = uiState.commentLikeCount.toString(), Modifier.layoutId("likeCount"))
+        Text(text = comment.commentLikeCount.toString(), Modifier.layoutId("likeCount"))
     }
 }
 
@@ -139,5 +134,5 @@ fun ItemCommentConstraintSet(): ConstraintSet {
 @Preview
 @Composable
 fun PreviewItemComment() {
-    ItemComment(uiState = testComment())
+    ItemComment(comment = testComment())
 }

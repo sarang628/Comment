@@ -1,4 +1,4 @@
-package com.sarang.torang.comments
+package com.sarang.torang.compose.comments
 
 import TorangAsyncImage
 import androidx.compose.foundation.layout.Box
@@ -24,15 +24,18 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.sarang.torang.data.comments.Comment
 import kotlinx.coroutines.delay
 
 @Composable
 fun InputComment(
+    modifier: Modifier = Modifier,
     profileImageUrl: String,
     onSend: () -> Unit,
     name: String,
     input: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    replyName: String? = null
 ) {
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
@@ -42,7 +45,7 @@ fun InputComment(
         focusRequester.requestFocus()
     }
     Row(
-        Modifier
+        modifier
             .height(50.dp)
             .padding(top = 7.dp), verticalAlignment = Alignment.CenterVertically
     ) {
@@ -61,16 +64,24 @@ fun InputComment(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .focusRequester(focusRequester)
-            ,
+                .focusRequester(focusRequester),
             decorationBox = { innerTextField ->
-                Box() {
-                    if (input.isEmpty()) {
+                if (replyName != null) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "@${replyName}")
+                        Spacer(Modifier.width(3.dp))
+                        innerTextField()
+                    }
+
+                } else if (input.isEmpty()) {
+                    Box {
                         Text(
                             text = "Add a comment for $name",
                             color = Color.Gray
                         )
+                        innerTextField()
                     }
+                } else {
                     innerTextField()
                 }
             }
