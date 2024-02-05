@@ -1,23 +1,40 @@
 package com.sarang.torang.compose.comments
 
 import TorangAsyncImage
+import android.util.Log
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,9 +44,10 @@ import androidx.constraintlayout.compose.Dimension
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.favoriteIcon
 import com.sarang.torang.data.comments.testComment
+import kotlinx.coroutines.launch
 
 @Composable
-fun ItemComment(
+fun Comment(
     comment: Comment,
     onFavorite: (() -> Unit)? = null,
     onReply: (() -> Unit)? = null
@@ -46,7 +64,7 @@ fun ItemComment(
                     Color.Transparent
                 }
             ),
-        constraintSet = ItemCommentConstraintSet()
+        constraintSet = itemCommentConstraintSet()
     ) {
         TorangAsyncImage(
             model = comment.profileImageUrl,
@@ -84,7 +102,7 @@ fun ItemComment(
     }
 }
 
-fun ItemCommentConstraintSet(): ConstraintSet {
+fun itemCommentConstraintSet(): ConstraintSet {
     return ConstraintSet {
         val profileImage = createRefFor("profileImage")
         val name = createRefFor("name")
@@ -138,8 +156,116 @@ fun ItemCommentConstraintSet(): ConstraintSet {
 
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwipeToDismissComment(
+    comment: Comment,
+    onDelete: (Int) -> Unit,
+    onUndo: (Int) -> Unit,
+    onFavorite: ((Int) -> Unit)? = null,
+    onReply: ((Comment) -> Unit)? = null,
+    myId: Int?
+) {
+    val coroutineScope = rememberCoroutineScope()
+    var confirm by remember { mutableStateOf(false) }
+    val state =
+        rememberDismissState(positionalThreshold = { f -> 500f }, confirmValueChange = { value ->
+            if (value == DismissValue.DismissedToStart) {
+                Log.d("ItemCommentList", value.toString())
+                confirm = true
+                onDelete.invoke(comment.commentsId)
+            }
+            true
+        })
+    SwipeToDismiss(state = state, background = {
+        val color by animateColorAsState(
+            when (state.targetValue) {
+                DismissValue.Default -> Color.Transparent
+                DismissValue.DismissedToStart -> MaterialTheme.colorScheme.secondary
+                else -> Color.Transparent
+            }, label = ""
+        )
+        Undo(
+            color = color,
+            onUndo = {
+                onUndo.invoke(comment.commentsId)
+                coroutineScope.launch {
+                    state.reset()
+                }
+            },
+            confirm = confirm,
+            showIcon = state.targetValue == DismissValue.DismissedToStart
+        )
+    }, dismissContent = {
+        Comment(comment = comment,
+            onFavorite = { onFavorite?.invoke(comment.commentsId) },
+            onReply = { onReply?.invoke(comment) })
+    }, directions = if (comment.userId == myId) setOf(DismissDirection.EndToStart) else setOf()
+    )
+}
+
+@Composable
+fun Undo(
+    color: Color,
+    onUndo: () -> Unit,
+    confirm: Boolean,
+    showIcon: Boolean
+) {
+    Box(
+        modifier = Modifier
+            .background(color = color)
+            .fillMaxSize()
+            .padding(end = 10.dp)
+    ) {
+        if (confirm) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onUndo.invoke()
+                    },
+                textAlign = TextAlign.Center,
+                text = "Undo",
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        if (showIcon) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "",
+                modifier = Modifier.align(Alignment.CenterEnd)
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
-fun PreviewItemComment() {
-    ItemComment(comment = testComment())
+fun PreviewUndo() {
+    Undo(
+        color = MaterialTheme.colorScheme.secondary,
+        onUndo = { /*TODO*/ },
+        confirm = true,
+        showIcon = true
+    )
+}
+
+@Preview
+@Composable
+fun PreviewSwipeToDismissComment() {
+    SwipeToDismissComment(
+        comment = testComment(),
+        onDelete = {},
+        onUndo = {},
+        myId = 0
+    )
+}
+
+@Preview
+@Composable
+fun PreviewComment() {
+    Comment(comment = testComment())
 }

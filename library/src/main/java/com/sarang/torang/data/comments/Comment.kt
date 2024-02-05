@@ -20,8 +20,9 @@ data class Comment(
 val Comment.favoriteIcon: ImageVector get() = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
 val Comment.isFavorite: Boolean get() = commentLikeId != null
 
-fun testComment(): Comment {
+fun testComment(commentId: Int = 0): Comment {
     return Comment(
+        commentsId = commentId,
         userId = 0,
         profileImageUrl = "1/2023-09-14/10_44_39_302.jpeg",
         date = "1d",
