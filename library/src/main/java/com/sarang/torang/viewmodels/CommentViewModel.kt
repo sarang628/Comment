@@ -76,7 +76,7 @@ class CommentViewModel @Inject constructor(
                 }
                 _uiState.update { it.copy(onTop = true) }
                 val comment = _uiState.value.comment
-                _uiState.update { it.copy(comment = "") }
+                _uiState.update { it.copy(comment = "", reply = null) }
                 delay(1000)
                 val result = sendCommentUseCase.invoke(
                     reviewId = uiState.value.reviewId!!,
@@ -175,6 +175,22 @@ class CommentViewModel @Inject constructor(
 
                 }
             }
+        }
+    }
+
+    fun onReply(comment: Comment) {
+        _uiState.update {
+            it.copy(
+                reply = comment
+            )
+        }
+    }
+
+    fun onClearReply() {
+        _uiState.update {
+            it.copy(
+                reply = null
+            )
         }
     }
 }

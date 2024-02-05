@@ -19,8 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.samples.apps.sunflower.ui.TorangTheme
-import com.sarang.torang.comments.CommentsModal
-import com.sarang.torang.comments.PreviewComments
+import com.sarang.torang.compose.comments.CommentsModal
+import com.sarang.torang.compose.comments.PreviewComments
 import com.sarang.torang.repository.LoginRepository
 import com.sarang.torang.repository.LoginRepositoryTest
 import dagger.hilt.android.AndroidEntryPoint
