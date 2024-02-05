@@ -1,10 +1,8 @@
 package com.sarang.torang.data.comments
 
-import android.graphics.drawable.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class Comment(
@@ -19,7 +17,6 @@ data class Comment(
     val commentLikeCount : Int
 )
 
-val Comment.background: Color get() = if (isUploading) Color.LightGray else Color.Transparent
 val Comment.favoriteIcon: ImageVector get() = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
 val Comment.isFavorite: Boolean get() = commentLikeId != null
 
