@@ -115,7 +115,7 @@ fun itemCommentConstraintSet(): ConstraintSet {
 
         constrain(profileImage) {
             start.linkTo(parent.start, 8.dp)
-            top.linkTo(parent.top, 8.dp)
+            top.linkTo(parent.top)
         }
 
         constrain(name) {

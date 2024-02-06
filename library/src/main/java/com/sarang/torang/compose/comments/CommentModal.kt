@@ -238,7 +238,7 @@ fun commentsConstraintSet(): ConstraintSet {
 @Preview
 @Composable
 fun CommentHelp(modifie: Modifier = Modifier) {
-    Column(modifie.padding(top = 5.dp, bottom = 15.dp, start = 10.dp, end = 10.dp)) {
+    Column(modifie.padding(top = 5.dp, start = 10.dp, end = 10.dp)) {
         Text(
             text = "this reel is shared publicly to Facebook. Your interactions can also appear..",
         )
@@ -336,7 +336,7 @@ fun PreviewCommentModalBody() {
         onUndo = {},
         sendComment = {},
         uiState = CommentsUiState().copy(
-            list = arrayListOf(testComment()),
+//            list = arrayListOf(testComment()),
             myId = 10,
             reply = testComment()
         )
