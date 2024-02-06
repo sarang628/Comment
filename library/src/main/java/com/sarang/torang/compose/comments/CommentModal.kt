@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -43,6 +44,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
@@ -126,17 +128,23 @@ fun CommentModalBody(
         )
         CommentHelp(Modifier.layoutId("commentHelp"))
 
-        Comments(
-            modifier = Modifier.layoutId("itemCommentList"),
-            list = uiState.list,
-            onTop = uiState.onTop,
-            onScrollTop = { onScrollTop() },
-            onDelete = { onDelete(it) },
-            onUndo = { onUndo(it) },
-            myId = uiState.myId,
-            onFavorite = onFavorite,
-            onReply = onReply
-        )
+        if (uiState.list.isEmpty()) {
+            EmptyComment(Modifier.layoutId("itemCommentList"))
+        } else {
+            Comments(
+                modifier = Modifier.layoutId("itemCommentList")
+                    .heightIn(min = 350.dp)
+                    .fillMaxWidth(),
+                list = uiState.list,
+                onTop = uiState.onTop,
+                onScrollTop = onScrollTop,
+                onDelete = onDelete,
+                onUndo = onUndo,
+                onFavorite = onFavorite,
+                onReply = onReply,
+                myId = uiState.myId
+            )
+        }
 
         if (uiState.reply != null)
             Row(
@@ -314,6 +322,24 @@ fun InputComment(
         )
         Button(onClick = { onSend.invoke() }) {
             Text(text = "send")
+        }
+    }
+}
+
+@Preview
+@Composable
+fun EmptyComment(modifier: Modifier = Modifier) {
+    Box(
+        modifier
+            .height(350.dp)
+            .fillMaxWidth()
+    ) {
+        Column(Modifier.align(Alignment.Center)) {
+            Text(text = "No comments yet", fontWeight = FontWeight.Bold, fontSize = 23.sp)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(text = "Start the conversation.")
         }
     }
 }
