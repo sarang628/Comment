@@ -51,6 +51,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.testComment
+import com.sarang.torang.data.comments.testSubComment
 import com.sarang.torang.uistate.CommentsUiState
 import com.sarang.torang.uistate.isLogin
 import com.sarang.torang.viewmodels.CommentViewModel
@@ -132,7 +133,8 @@ fun CommentModalBody(
             EmptyComment(Modifier.layoutId("itemCommentList"))
         } else {
             Comments(
-                modifier = Modifier.layoutId("itemCommentList")
+                modifier = Modifier
+                    .layoutId("itemCommentList")
                     .heightIn(min = 350.dp)
                     .fillMaxWidth(),
                 list = uiState.list,
@@ -362,7 +364,20 @@ fun PreviewCommentModalBody() {
         onUndo = {},
         sendComment = {},
         uiState = CommentsUiState().copy(
-//            list = arrayListOf(testComment()),
+            list = arrayListOf(
+                testComment(0),
+                testComment(1),
+                testComment(2),
+                testSubComment(9),
+                testSubComment(10),
+                testSubComment(11),
+                testComment(3),
+                testComment(4),
+                testComment(5),
+                testComment(6),
+                testComment(7),
+                testComment(8),
+            ),
             myId = 10,
             reply = testComment()
         )

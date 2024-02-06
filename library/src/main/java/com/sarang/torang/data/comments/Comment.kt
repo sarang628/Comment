@@ -14,11 +14,14 @@ data class Comment(
     val name: String,
     val isUploading: Boolean = false,
     val commentLikeId: Int? = null,
-    val commentLikeCount : Int
+    val commentLikeCount: Int,
+    val parentCommentId: Int? = null
 )
 
 val Comment.favoriteIcon: ImageVector get() = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
 val Comment.isFavorite: Boolean get() = commentLikeId != null
+
+val Comment.isSubComment: Boolean get() = parentCommentId != null
 
 fun testComment(commentId: Int = 0): Comment {
     return Comment(
@@ -31,5 +34,20 @@ fun testComment(commentId: Int = 0): Comment {
         name = "name",
         isUploading = false,
         commentLikeCount = 20
+    )
+}
+
+fun testSubComment(commentId: Int = 0): Comment {
+    return Comment(
+        commentsId = commentId,
+        userId = 0,
+        profileImageUrl = "1/2023-09-14/10_44_39_302.jpeg",
+        date = "1d",
+        comment = "comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment",
+//        comment = "comment",
+        name = "name",
+        isUploading = false,
+        commentLikeCount = 20,
+        parentCommentId = 1
     )
 }

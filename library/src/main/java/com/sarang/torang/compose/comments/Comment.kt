@@ -6,16 +6,21 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +48,9 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.favoriteIcon
+import com.sarang.torang.data.comments.isSubComment
 import com.sarang.torang.data.comments.testComment
+import com.sarang.torang.data.comments.testSubComment
 import kotlinx.coroutines.launch
 
 @Composable
@@ -64,7 +71,7 @@ fun Comment(
                     Color.Transparent
                 }
             ),
-        constraintSet = itemCommentConstraintSet()
+        constraintSet = itemCommentConstraintSet(isSubComment = comment.isSubComment)
     ) {
         TorangAsyncImage(
             model = comment.profileImageUrl,
@@ -72,7 +79,7 @@ fun Comment(
             progressSize = 20.dp,
             modifier = Modifier
                 .layoutId("profileImage")
-                .size(40.dp)
+                .size(if (comment.isSubComment) 30.dp else 40.dp)
                 .clip(CircleShape),
         )
 
@@ -102,7 +109,7 @@ fun Comment(
     }
 }
 
-fun itemCommentConstraintSet(): ConstraintSet {
+fun itemCommentConstraintSet(isSubComment: Boolean = false): ConstraintSet {
     return ConstraintSet {
         val profileImage = createRefFor("profileImage")
         val name = createRefFor("name")
@@ -114,7 +121,7 @@ fun itemCommentConstraintSet(): ConstraintSet {
         val replies = createRefFor("replies")
 
         constrain(profileImage) {
-            start.linkTo(parent.start, 8.dp)
+            start.linkTo(parent.start, if (isSubComment) 48.dp else 8.dp)
             top.linkTo(parent.top)
         }
 
@@ -244,6 +251,36 @@ fun Undo(
 
 @Preview
 @Composable
+fun moreReply(count: Int? = 0) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .height(30.dp), verticalAlignment = Alignment.CenterVertically
+    ) {
+        Spacer(modifier = Modifier.width(50.dp))
+        HorizontalDivider(Modifier.width(50.dp))
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = "View ${count} more reply", color = Color.Gray, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Preview
+@Composable
+fun hideReply() {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .height(30.dp), verticalAlignment = Alignment.CenterVertically
+    ) {
+        Spacer(modifier = Modifier.width(50.dp))
+        HorizontalDivider(Modifier.width(50.dp))
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = "Hide replies", color = Color.Gray, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Preview
+@Composable
 fun PreviewUndo() {
     Undo(
         color = MaterialTheme.colorScheme.secondary,
@@ -268,4 +305,10 @@ fun PreviewSwipeToDismissComment() {
 @Composable
 fun PreviewComment() {
     Comment(comment = testComment())
+}
+
+@Preview
+@Composable
+fun PreviewSubComment() {
+    Comment(comment = testSubComment())
 }

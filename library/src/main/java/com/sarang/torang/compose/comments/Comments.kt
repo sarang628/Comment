@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.testComment
+import com.sarang.torang.data.comments.testSubComment
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -67,6 +68,9 @@ fun PreviewComments() {
             testComment(0),
             testComment(1),
             testComment(2),
+            testSubComment(9),
+            testSubComment(10),
+            testSubComment(11),
             testComment(3),
             testComment(4),
             testComment(5),
