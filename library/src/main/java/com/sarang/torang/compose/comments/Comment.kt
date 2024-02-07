@@ -106,6 +106,10 @@ fun Comment(
         }
 
         Text(text = comment.commentLikeCount.toString(), Modifier.layoutId("likeCount"))
+
+        if (comment.subCommentCount != null) {
+            MoreReply(Modifier.layoutId("moreReply"), comment.subCommentCount)
+        }
     }
 }
 
@@ -119,6 +123,7 @@ fun itemCommentConstraintSet(isSubComment: Boolean = false): ConstraintSet {
         val favorite = createRefFor("favorite")
         val likeCount = createRefFor("likeCount")
         val replies = createRefFor("replies")
+        val moreReply = createRefFor("moreReply")
 
         constrain(profileImage) {
             start.linkTo(parent.start, if (isSubComment) 48.dp else 8.dp)
@@ -157,6 +162,10 @@ fun itemCommentConstraintSet(isSubComment: Boolean = false): ConstraintSet {
 
         constrain(replies) {
             top.linkTo(replyAndPosting.bottom)
+        }
+
+        constrain(moreReply) {
+            top.linkTo(replies.bottom)
         }
 
     }
@@ -251,9 +260,9 @@ fun Undo(
 
 @Preview
 @Composable
-fun moreReply(count: Int? = 0) {
+fun MoreReply(modifier: Modifier = Modifier, count: Int? = 0) {
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
             .height(30.dp), verticalAlignment = Alignment.CenterVertically
     ) {
@@ -266,9 +275,9 @@ fun moreReply(count: Int? = 0) {
 
 @Preview
 @Composable
-fun hideReply() {
+fun HideReply(modifier: Modifier = Modifier) {
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
             .height(30.dp), verticalAlignment = Alignment.CenterVertically
     ) {

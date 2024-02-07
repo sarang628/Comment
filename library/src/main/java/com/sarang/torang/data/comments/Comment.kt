@@ -15,7 +15,8 @@ data class Comment(
     val isUploading: Boolean = false,
     val commentLikeId: Int? = null,
     val commentLikeCount: Int,
-    val parentCommentId: Int? = null
+    val parentCommentId: Int? = null,
+    val subCommentCount: Int? = null
 )
 
 val Comment.favoriteIcon: ImageVector get() = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
@@ -33,7 +34,8 @@ fun testComment(commentId: Int = 0): Comment {
 //        comment = "comment",
         name = "name",
         isUploading = false,
-        commentLikeCount = 20
+        commentLikeCount = 20,
+        subCommentCount = 100
     )
 }
 
