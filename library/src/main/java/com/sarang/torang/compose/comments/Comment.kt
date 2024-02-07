@@ -108,7 +108,7 @@ fun Comment(
 
         Text(text = comment.commentLikeCount.toString(), Modifier.layoutId("likeCount"))
 
-        if (comment.subCommentCount != null) {
+        if (comment.subCommentCount != null && comment.subCommentCount > 0) {
             MoreReply(Modifier.layoutId("moreReply"), comment.subCommentCount)
         }
     }

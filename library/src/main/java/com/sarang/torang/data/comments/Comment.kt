@@ -27,7 +27,7 @@ data class Comment(
 
 val Comment.favoriteIcon: ImageVector get() = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
 val Comment.isFavorite: Boolean get() = commentLikeId != null
-val Comment.isSubComment: Boolean get() = parentCommentId != null
+val Comment.isSubComment: Boolean get() = (parentCommentId != null && parentCommentId != 0)
 val Comment.transFormComment: AnnotatedString
     get() = if (tagUser != null) buildAnnotatedString {
         withStyle(
