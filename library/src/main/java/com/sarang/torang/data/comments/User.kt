@@ -1,6 +1,6 @@
 package com.sarang.torang.data.comments
 
 data class User(
-    val profilerl: String,
+    val profileUrl: String,
     val userId: Int
 )

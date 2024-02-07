@@ -37,7 +37,7 @@ class CommentViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val user = getUserUseCase.invoke()
-                _uiState.update { it.copy(profileImageUrl = user.profilerl, myId = user.userId) }
+                _uiState.update { it.copy(profileImageUrl = user.profileUrl, myId = user.userId) }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = e.message) }
             }
