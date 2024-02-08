@@ -39,7 +39,13 @@ class CommentViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val user = getUserUseCase.invoke()
-                _uiState.update { it.copy(profileImageUrl = user.profileUrl, myId = user.userId) }
+                _uiState.update {
+                    it.copy(
+                        profileImageUrl = user.profileUrl,
+                        myId = user.userId,
+                        name = user.userName
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = e.message) }
             }
@@ -118,7 +124,7 @@ class CommentViewModel @Inject constructor(
                         name = uiState.value.name,
                         isUploading = true,
                         commentLikeCount = 0,
-                        parentCommentId = 10
+                        parentCommentId = uiState.value.reply?.parentCommentId
                     )
                 )
                 //TODO::위치 찾기

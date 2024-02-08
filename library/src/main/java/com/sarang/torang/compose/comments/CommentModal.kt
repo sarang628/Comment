@@ -159,8 +159,10 @@ fun CommentModalBody(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TorangAsyncImage(
-                    model = "",
-                    modifier = Modifier.size(30.dp),
+                    model = uiState.reply.profileImageUrl,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(CircleShape),
                     progressSize = 20.dp,
                     errorIconSize = 20.dp
                 )
