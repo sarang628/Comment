@@ -86,7 +86,11 @@ fun Comment(
 
         Text(text = comment.name, Modifier.layoutId("name"), fontSize = 13.sp)
         Text(text = comment.date, Modifier.layoutId("date"), color = Color.Gray, fontSize = 13.sp)
-        Text(text = comment.transFormComment, Modifier.layoutId("comment"), fontSize = 13.sp)
+        Text(
+            text = comment.transFormComment(MaterialTheme.colorScheme.primary),
+            Modifier.layoutId("comment"),
+            fontSize = 13.sp
+        )
         Text(
             text = if (comment.isUploading) "Posting" else "Reply",
             fontWeight = FontWeight.Bold,
@@ -270,7 +274,12 @@ fun MoreReply(modifier: Modifier = Modifier, count: Int? = 0) {
         Spacer(modifier = Modifier.width(50.dp))
         HorizontalDivider(Modifier.width(50.dp))
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = "View ${count} more reply", color = Color.Gray, fontWeight = FontWeight.Bold)
+        Text(
+            text = "View ${count} more reply",
+            color = Color.Gray,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp
+        )
     }
 }
 
@@ -285,7 +294,12 @@ fun HideReply(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.width(50.dp))
         HorizontalDivider(Modifier.width(50.dp))
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = "Hide replies", color = Color.Gray, fontWeight = FontWeight.Bold)
+        Text(
+            text = "Hide replies",
+            color = Color.Gray,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp
+        )
     }
 }
 

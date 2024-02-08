@@ -12,6 +12,7 @@ import com.sarang.torang.usecase.comments.DeleteCommentUseCase
 import com.sarang.torang.usecase.comments.GetCommentsUseCase
 import com.sarang.torang.usecase.comments.GetUserUseCase
 import com.sarang.torang.usecase.comments.SendCommentUseCase
+import com.sarang.torang.usecase.comments.SendReplyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +28,8 @@ class CommentViewModel @Inject constructor(
     private val sendCommentUseCase: SendCommentUseCase,
     private val deleteCommentUseCase: DeleteCommentUseCase,
     private val addCommentUseCase: AddCommentLikeUseCase,
-    private val deleteCommentLikeUseCaes: DeleteCommentLikeUseCase
+    private val deleteCommentLikeUseCaes: DeleteCommentLikeUseCase,
+    private val sendReplyUseCase: SendReplyUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CommentsUiState())
     val uiState = _uiState.asStateFlow()
@@ -56,6 +58,14 @@ class CommentViewModel @Inject constructor(
     }
 
     fun sendComment() {
+        if (_uiState.value.reply == null) {
+            addNewComment()
+        } else {
+            addReply()
+        }
+    }
+
+    fun addNewComment() {
         viewModelScope.launch {
             try {
                 _uiState.update {
@@ -76,8 +86,8 @@ class CommentViewModel @Inject constructor(
                 }
                 _uiState.update { it.copy(onTop = true) }
                 val comment = _uiState.value.comment
-                _uiState.update { it.copy(comment = "", reply = null) }
-                delay(1000)
+                _uiState.update { it.copy(comment = "", reply = null) } // 코멘트 입력창 초기화
+                delay(1000) //리스트 최상단 올라가는 시간
                 val result = sendCommentUseCase.invoke(
                     reviewId = uiState.value.reviewId!!,
                     comment = comment
@@ -93,12 +103,57 @@ class CommentViewModel @Inject constructor(
         }
     }
 
+    private fun addReply() {
+        viewModelScope.launch {
+            try {
+                // 하위 코멘트로 추가하기
+                val modList = ArrayList(uiState.value.list)
+                modList.add(
+                    modList.indexOf(modList.find { it.commentsId == uiState.value.reply?.commentsId }) + 1,
+                    Comment(
+                        userId = 0,
+                        profileImageUrl = uiState.value.profileImageUrl,
+                        comment = uiState.value.comment,
+                        date = "",
+                        name = uiState.value.name,
+                        isUploading = true,
+                        commentLikeCount = 0,
+                        parentCommentId = 10
+                    )
+                )
+                //TODO::위치 찾기
+                val result = sendReplyUseCase.invoke(
+                    reviewId = uiState.value.reviewId!!,
+                    parentCommentId = uiState.value.reply?.commentsId!!,
+                    comment = uiState.value.comment
+                )
+                _uiState.update {
+                    it.copy(
+                        list = modList,
+                        comment = "",
+                        reply = null
+                    )
+                } // 코멘트 입력창 초기화
+                _uiState.update {
+                    it.copy(list = ArrayList(it.list).apply {
+                        set(
+                            modList.indexOf(modList.find { it.commentsId == uiState.value.reply?.commentsId }) + 2,
+                            result
+                        )
+                    })
+                }
+
+            } catch (e: Exception) {
+                Log.e("_CommentViewModel", e.toString())
+            }
+        }
+    }
+
     fun clearErrorMessage() {
         _uiState.update { it.copy(error = null) }
     }
 
     fun onCommentChange(comment: String) {
-        Log.d("_CommentViewModel", comment)
         _uiState.update { it.copy(comment = comment) }
     }
 

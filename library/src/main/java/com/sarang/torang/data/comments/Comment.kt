@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 
 data class Comment(
@@ -28,16 +29,17 @@ data class Comment(
 val Comment.favoriteIcon: ImageVector get() = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
 val Comment.isFavorite: Boolean get() = commentLikeId != null
 val Comment.isSubComment: Boolean get() = (parentCommentId != null && parentCommentId != 0)
-val Comment.transFormComment: AnnotatedString
-    get() = if (tagUser != null) buildAnnotatedString {
+fun Comment.transFormComment(color: Color = Color(0xFF0000EE)): AnnotatedString {
+    return if (tagUser != null) buildAnnotatedString {
         withStyle(
-            SpanStyle(color = Color(0xFF0000EE))
+            SpanStyle(color = color, fontWeight = FontWeight.Bold)
         ) {
             append("@${this@transFormComment.tagUser.userName}")
         }
         append(" ")
         append("${this@transFormComment.comment}")
     } else AnnotatedString(this.comment)
+}
 
 fun testComment(commentId: Int = 0): Comment {
     return Comment(
