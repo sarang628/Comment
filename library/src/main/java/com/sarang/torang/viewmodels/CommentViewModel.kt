@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.isFavorite
 import com.sarang.torang.uistate.CommentsUiState
+import com.sarang.torang.uistate.toComment
 import com.sarang.torang.usecase.comments.AddCommentLikeUseCase
 import com.sarang.torang.usecase.comments.DeleteCommentLikeUseCase
 import com.sarang.torang.usecase.comments.DeleteCommentUseCase
@@ -74,35 +75,18 @@ class CommentViewModel @Inject constructor(
     fun addNewComment() {
         viewModelScope.launch {
             try {
-                _uiState.update {
-                    it.copy(list = ArrayList<Comment>().apply {
-                        add(
-                            Comment(
-                                userId = 0,
-                                profileImageUrl = it.profileImageUrl,
-                                comment = it.comment,
-                                date = "",
-                                name = it.name,
-                                isUploading = true,
-                                commentLikeCount = 0
-                            )
-                        )
-                        addAll(it.list)
-                    })
-                }
-                _uiState.update { it.copy(onTop = true) }
                 val comment = _uiState.value.comment
-                _uiState.update { it.copy(comment = "", reply = null) } // 코멘트 입력창 초기화
-                delay(1000) //리스트 최상단 올라가는 시간
-                val result = sendCommentUseCase.invoke(
+                val list = ArrayList(_uiState.value.list).apply {
+                    add(0, uiState.value.toComment)
+                }
+                //리스트 코멘트 추가 및 입력창 초기화
+                _uiState.update { it.copy(list = list, onTop = true, comment = "", reply = null) }
+                delay(1000) //리스트 상단으로 올라가는 시간
+                list[0] = sendCommentUseCase.invoke(
                     reviewId = uiState.value.reviewId!!,
                     comment = comment
                 )
-                _uiState.update {
-                    it.copy(list = ArrayList(it.list).apply {
-                        set(0, result)
-                    })
-                }
+                _uiState.update { it.copy(list = list) }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = e.message) }
             }
@@ -114,41 +98,19 @@ class CommentViewModel @Inject constructor(
             try {
                 // 하위 코멘트로 추가하기
                 val modList = ArrayList(uiState.value.list)
-                modList.add(
-                    modList.indexOf(modList.find { it.commentsId == uiState.value.reply?.commentsId }) + 1,
-                    Comment(
-                        userId = 0,
-                        profileImageUrl = uiState.value.profileImageUrl,
-                        comment = uiState.value.comment,
-                        date = "",
-                        name = uiState.value.name,
-                        isUploading = true,
-                        commentLikeCount = 0,
-                        parentCommentId = uiState.value.reply?.parentCommentId
-                    )
-                )
+                val selectedIndex =
+                    modList.indexOf(modList.find { it.commentsId == uiState.value.reply?.commentsId })
+                // 코멘트 추가
+                modList.add(selectedIndex + 1, uiState.value.toComment)
+                // 코멘트 입력창 초기화
+                _uiState.update { it.copy(list = modList, comment = "", reply = null) }
                 //TODO::위치 찾기
-                val result = sendReplyUseCase.invoke(
+                modList[selectedIndex + 2] = sendReplyUseCase.invoke(
                     reviewId = uiState.value.reviewId!!,
                     parentCommentId = uiState.value.reply?.commentsId!!,
                     comment = uiState.value.comment
                 )
-                _uiState.update {
-                    it.copy(
-                        list = modList,
-                        comment = "",
-                        reply = null
-                    )
-                } // 코멘트 입력창 초기화
-                _uiState.update {
-                    it.copy(list = ArrayList(it.list).apply {
-                        set(
-                            modList.indexOf(modList.find { it.commentsId == uiState.value.reply?.commentsId }) + 2,
-                            result
-                        )
-                    })
-                }
-
+                _uiState.update { it.copy(list = modList) }
             } catch (e: Exception) {
                 Log.e("_CommentViewModel", e.toString())
             }
@@ -240,18 +202,10 @@ class CommentViewModel @Inject constructor(
     }
 
     fun onReply(comment: Comment) {
-        _uiState.update {
-            it.copy(
-                reply = comment
-            )
-        }
+        _uiState.update { it.copy(reply = comment) }
     }
 
     fun onClearReply() {
-        _uiState.update {
-            it.copy(
-                reply = null
-            )
-        }
+        _uiState.update { it.copy(reply = null) }
     }
 }

@@ -15,4 +15,18 @@ data class CommentsUiState(
     val reply: Comment? = null
 )
 
+val CommentsUiState.toComment: Comment
+    get() {
+        return Comment(
+            userId = 0,
+            profileImageUrl = this.profileImageUrl,
+            comment = this.comment,
+            date = "",
+            name = this.name,
+            isUploading = true,
+            commentLikeCount = 0,
+            parentCommentId = this.reply?.parentCommentId
+        )
+    }
+
 val CommentsUiState.isLogin get() = myId != null
