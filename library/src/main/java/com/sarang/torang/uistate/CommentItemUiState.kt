@@ -15,6 +15,9 @@ data class CommentsUiState(
     val uploadingComment: Comment? = null
 )
 
+val CommentsUiState.selectedIndex: Int get() = list.indexOf(list.find { it.commentsId == reply?.commentsId })
+val CommentsUiState.selectedReplyIndex: Int get() = list.indexOf(list.find { it.commentsId == uploadingComment?.parentCommentId })
+
 val CommentsUiState.toComment: Comment
     get() {
         return Comment(
@@ -25,7 +28,7 @@ val CommentsUiState.toComment: Comment
             name = this.writer?.userName ?: "",
             isUploading = true,
             commentLikeCount = 0,
-            parentCommentId = this.reply?.commentsId
+            parentCommentId = this.reply?.commentsId // 새 코멘트인지, 답장인지 구분 값
         )
     }
 

@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.isFavorite
 import com.sarang.torang.uistate.CommentsUiState
+import com.sarang.torang.uistate.selectedIndex
+import com.sarang.torang.uistate.selectedReplyIndex
 import com.sarang.torang.uistate.toComment
 import com.sarang.torang.usecase.comments.AddCommentLikeUseCase
 import com.sarang.torang.usecase.comments.DeleteCommentLikeUseCase
@@ -85,7 +87,21 @@ class CommentViewModel @Inject constructor(
                 )
             }
         } else {
-            addReply()
+            // 하위 코멘트로 추가하기
+            val modList = ArrayList(uiState.value.list)
+            val uploadComment = uiState.value.toComment
+            val selectedIndex = uiState.value.selectedIndex
+            // 코멘트 추가
+            modList.add(selectedIndex + 1, uploadComment)
+            _uiState.update {
+                it.copy(
+                    list = modList,
+                    comment = "",
+                    reply = null,
+                    movePosition = selectedIndex,
+                    uploadingComment = uploadComment
+                )
+            }
         }
     }
 
@@ -104,30 +120,17 @@ class CommentViewModel @Inject constructor(
         }
     }
 
-    private fun addReply() {
+    private fun addReply(comment: Comment) {
         viewModelScope.launch {
             try {
-                // 하위 코멘트로 추가하기
                 val modList = ArrayList(uiState.value.list)
-                val selectedIndex =
-                    modList.indexOf(modList.find { it.commentsId == uiState.value.reply?.commentsId })
-                // 코멘트 추가
-                modList.add(selectedIndex + 1, uiState.value.toComment)
-                // 코멘트 입력창 초기화
-                val reply = uiState.value.reply
-                val comment = uiState.value.comment
-                _uiState.update {
-                    it.copy(
-                        list = modList, comment = "", reply = null, movePosition = selectedIndex
-                    )
-                }
-                delay(1000)
+                val selectedIndex = uiState.value.selectedReplyIndex
                 modList[selectedIndex + 1] = sendReplyUseCase.invoke(
                     reviewId = uiState.value.reviewId!!,
-                    parentCommentId = reply?.commentsId!!,
-                    comment = comment
+                    parentCommentId = comment.parentCommentId!!,
+                    comment = comment.comment
                 )
-                _uiState.update { it.copy(list = modList) }
+                _uiState.update { it.copy(list = modList, uploadingComment = null) }
             } catch (e: Exception) {
                 Log.e("_CommentViewModel", e.toString())
             }
@@ -145,7 +148,7 @@ class CommentViewModel @Inject constructor(
     fun onPosition() {
         uiState.value.uploadingComment?.let {
             if (it.parentCommentId != null) {
-                //addReply()
+                addReply(it)
             } else {
                 addNewComment(it)
             }
