@@ -69,8 +69,8 @@ fun CommentsModal(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(key1 = uiState.error, block = {
-        uiState.error?.let {
+    LaunchedEffect(key1 = uiState.snackBarMessage, block = {
+        uiState.snackBarMessage?.let {
             snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
             viewModel.clearErrorMessage()
         }

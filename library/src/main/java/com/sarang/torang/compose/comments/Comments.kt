@@ -9,12 +9,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.testComment
 import com.sarang.torang.data.comments.testSubComment
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -36,6 +41,14 @@ internal fun Comments(
             onPosition.invoke()
         }
     })
+
+    /*LaunchedEffect(key1 = listState) {
+        snapshotFlow { listState.firstVisibleItemIndex }
+            .map { index -> movePosition == index }
+            .distinctUntilChanged()
+            .filter { it }
+            .collect { onPosition.invoke() }
+    }*/
 
     // https://developer.android.com/jetpack/compose/lists#content-spacing
     LazyColumn(

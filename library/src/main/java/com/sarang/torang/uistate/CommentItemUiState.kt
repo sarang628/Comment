@@ -2,13 +2,12 @@ package com.sarang.torang.uistate
 
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.User
-import kotlin.random.Random
 
 
 data class CommentsUiState(
     val reviewId: Int? = null,
     val list: List<Comment> = listOf(),
-    val error: String? = null,
+    val snackBarMessage: String? = null,
     val comment: String = "",
     val movePosition: Int? = null,
     val reply: Comment? = null,
