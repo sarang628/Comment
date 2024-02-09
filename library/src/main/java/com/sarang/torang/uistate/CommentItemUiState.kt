@@ -18,6 +18,7 @@ data class CommentsUiState(
 val CommentsUiState.selectedIndex: Int get() = list.indexOf(list.find { it.commentsId == reply?.commentsId })
 val CommentsUiState.selectedReplyIndex: Int get() = list.indexOf(list.find { it.commentsId == uploadingComment?.parentCommentId })
 
+val CommentsUiState.isUploading: Boolean get() = uploadingComment != null
 val CommentsUiState.toComment: Comment
     get() {
         return Comment(

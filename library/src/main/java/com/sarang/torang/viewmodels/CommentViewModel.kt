@@ -69,11 +69,6 @@ class CommentViewModel @Inject constructor(
     }
 
     fun sendComment() {
-        if (uiState.value.uploadingComment != null) {
-            _uiState.update { it.copy(snackBarMessage = "업로드 중입니다.") }
-            return
-        }
-
         if (_uiState.value.reply == null) {
             //리스트 코멘트 추가 및 입력창 초기화 상단으로 보내고 기다리기
             val uploadComment = uiState.value.toComment

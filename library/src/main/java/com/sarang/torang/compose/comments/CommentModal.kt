@@ -55,6 +55,7 @@ import com.sarang.torang.data.comments.testComment
 import com.sarang.torang.data.comments.testSubComment
 import com.sarang.torang.uistate.CommentsUiState
 import com.sarang.torang.uistate.isLogin
+import com.sarang.torang.uistate.isUploading
 import com.sarang.torang.viewmodels.CommentViewModel
 import kotlinx.coroutines.delay
 
@@ -195,7 +196,8 @@ fun CommentModalBody(
                 name = uiState.writer?.userName ?: "",
                 input = uiState.comment,
                 onValueChange = { onCommentChange(it) },
-                replyName = uiState.reply?.name
+                replyName = uiState.reply?.name,
+                isUploading = uiState.isUploading
             )
 
     }
@@ -274,7 +276,8 @@ fun InputComment(
     name: String,
     input: String,
     onValueChange: (String) -> Unit,
-    replyName: String? = null
+    replyName: String? = null,
+    isUploading: Boolean = false
 ) {
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
@@ -325,7 +328,7 @@ fun InputComment(
                 }
             }
         )
-        Button(onClick = { onSend.invoke() }) {
+        Button(onClick = { onSend.invoke() }, enabled = !isUploading) {
             Text(text = "send")
         }
     }
@@ -352,9 +355,14 @@ fun EmptyComment(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun PreviewInputComment() {
-    InputComment(profileImageUrl = "", onSend = {
+    InputComment(/*preview*/
+        profileImageUrl = "", onSend = {
 
-    }, name = "name", input = "", onValueChange = {})
+        }, name = "name",
+        input = "",
+        onValueChange = {},
+        isUploading = true
+    )
 }
 
 @Preview
