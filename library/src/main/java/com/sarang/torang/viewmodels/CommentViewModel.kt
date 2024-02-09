@@ -34,18 +34,13 @@ class CommentViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CommentsUiState())
     val uiState = _uiState.asStateFlow()
-    val jobs = HashMap<Int, Boolean>()
+    private val jobs: HashMap<Long, Boolean> = HashMap()
 
     init {
         viewModelScope.launch {
             try {
-                val user = getUserUseCase.invoke()
                 _uiState.update {
-                    it.copy(
-                        profileImageUrl = user.profileUrl,
-                        myId = user.userId,
-                        name = user.userName
-                    )
+                    it.copy(writer = getUserUseCase.invoke())
                 }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = e.message) }
@@ -72,7 +67,7 @@ class CommentViewModel @Inject constructor(
         }
     }
 
-    fun addNewComment() {
+    private fun addNewComment() {
         viewModelScope.launch {
             try {
                 val comment = _uiState.value.comment
@@ -80,7 +75,14 @@ class CommentViewModel @Inject constructor(
                     add(0, uiState.value.toComment)
                 }
                 //리스트 코멘트 추가 및 입력창 초기화
-                _uiState.update { it.copy(list = list, onTop = true, comment = "", reply = null) }
+                _uiState.update {
+                    it.copy(
+                        list = list,
+                        movePosition = 0, // move to top
+                        comment = "",
+                        reply = null
+                    )
+                }
                 delay(1000) //리스트 상단으로 올라가는 시간
                 list[0] = sendCommentUseCase.invoke(
                     reviewId = uiState.value.reviewId!!,
@@ -103,12 +105,18 @@ class CommentViewModel @Inject constructor(
                 // 코멘트 추가
                 modList.add(selectedIndex + 1, uiState.value.toComment)
                 // 코멘트 입력창 초기화
-                _uiState.update { it.copy(list = modList, comment = "", reply = null) }
-                //TODO::위치 찾기
-                modList[selectedIndex + 2] = sendReplyUseCase.invoke(
+                val reply = uiState.value.reply
+                val comment = uiState.value.comment
+                _uiState.update {
+                    it.copy(
+                        list = modList, comment = "", reply = null, movePosition = selectedIndex
+                    )
+                }
+                delay(1000)
+                modList[selectedIndex + 1] = sendReplyUseCase.invoke(
                     reviewId = uiState.value.reviewId!!,
-                    parentCommentId = uiState.value.reply?.commentsId!!,
-                    comment = uiState.value.comment
+                    parentCommentId = reply?.commentsId!!,
+                    comment = comment
                 )
                 _uiState.update { it.copy(list = modList) }
             } catch (e: Exception) {
@@ -125,20 +133,20 @@ class CommentViewModel @Inject constructor(
         _uiState.update { it.copy(comment = comment) }
     }
 
-    fun onScrollTop() {
-        _uiState.update { it.copy(onTop = false) }
+    fun onPosition() {
+        _uiState.update { it.copy(movePosition = null) }
     }
 
-    fun onDelete(commentsId: Int) {
-        if (jobs.containsKey(commentsId) && jobs.get(commentsId) == true)
+    fun onDelete(commentsId: Long) {
+        if (jobs.containsKey(commentsId) && jobs[commentsId] == true)
             return
 
-        jobs.put(commentsId, true)
+        jobs[commentsId] = true
         viewModelScope.launch {
             delay(3000)
-            if (jobs.get(commentsId) == true) {
+            if (jobs[commentsId] == true) {
                 deleteCommentUseCase.delete(commentId = commentsId)
-                _uiState.update {
+                _uiState.update { it ->
                     it.copy(list = it.list.filter { it.commentsId != commentsId })
                 }
                 jobs.remove(commentsId)
@@ -146,11 +154,11 @@ class CommentViewModel @Inject constructor(
         }
     }
 
-    fun onUndo(commentId: Int) {
-        jobs.put(commentId, false)
+    fun onUndo(commentId: Long) {
+        jobs[commentId] = false
     }
 
-    fun onFavorite(commentId: Int) {
+    fun onFavorite(commentId: Long) {
         // 현재 좋아요 상태인지 확인
         val comment = uiState.value.list.find { it.commentsId == commentId } ?: return
         if (comment.isFavorite) {
@@ -159,7 +167,7 @@ class CommentViewModel @Inject constructor(
                 try {
                     deleteCommentLikeUseCaes.invoke(commentId)
                     // 좋아요 UI 업데이트
-                    _uiState.update {
+                    _uiState.update { it ->
                         it.copy(
                             list = it.list.map {
                                 if (it.commentsId == comment.commentsId)
@@ -173,6 +181,7 @@ class CommentViewModel @Inject constructor(
                         )
                     }
                 } catch (e: Exception) {
+                    Log.e("_CommentViewModel", e.toString())
                 }
             }
         } else {
@@ -181,7 +190,7 @@ class CommentViewModel @Inject constructor(
                 try {
                     val result = addCommentUseCase.invoke(commentId)
                     //좋아요 UI 업데이트
-                    _uiState.update {
+                    _uiState.update { it ->
                         it.copy(
                             list = it.list.map {
                                 if (it.commentsId == comment.commentsId)
@@ -195,7 +204,7 @@ class CommentViewModel @Inject constructor(
                         )
                     }
                 } catch (e: Exception) {
-
+                    Log.e("_CommentViewModel", e.toString())
                 }
             }
         }

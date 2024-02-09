@@ -182,9 +182,9 @@ fun itemCommentConstraintSet(isSubComment: Boolean = false): ConstraintSet {
 @Composable
 fun SwipeToDismissComment(
     comment: Comment,
-    onDelete: (Int) -> Unit,
-    onUndo: (Int) -> Unit,
-    onFavorite: ((Int) -> Unit)? = null,
+    onDelete: (Long) -> Unit,
+    onUndo: (Long) -> Unit,
+    onFavorite: ((Long) -> Unit)? = null,
     onReply: ((Comment) -> Unit)? = null,
     myId: Int?
 ) {

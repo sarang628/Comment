@@ -1,32 +1,33 @@
 package com.sarang.torang.uistate
 
 import com.sarang.torang.data.comments.Comment
+import com.sarang.torang.data.comments.User
+import kotlin.random.Random
 
 
 data class CommentsUiState(
     val reviewId: Int? = null,
     val list: List<Comment> = listOf(),
-    val name: String = "", // 코멘트 입력 시 화면에 선반영되는데 닉네임 필요
-    val profileImageUrl: String = "",
     val error: String? = null,
     val comment: String = "",
-    val onTop: Boolean = false,
-    val myId: Int? = null,
-    val reply: Comment? = null
+    val movePosition: Int? = null,
+    val reply: Comment? = null,
+    val writer: User? = null
+
 )
 
 val CommentsUiState.toComment: Comment
     get() {
         return Comment(
-            userId = 0,
-            profileImageUrl = this.profileImageUrl,
+            userId = this.writer?.userId ?: 0,
+            profileImageUrl = this.writer?.profileUrl ?: "",
             comment = this.comment,
             date = "",
-            name = this.name,
+            name = this.writer?.userName ?: "",
             isUploading = true,
             commentLikeCount = 0,
-            parentCommentId = this.reply?.parentCommentId
+            parentCommentId = this.reply?.commentsId
         )
     }
 
-val CommentsUiState.isLogin get() = myId != null
+val CommentsUiState.isLogin get() = writer?.userId != null

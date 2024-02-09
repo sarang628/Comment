@@ -6,5 +6,5 @@ import com.sarang.torang.data.comments.Comment
  * Request comment like/delete like
  */
 interface DeleteCommentLikeUseCase {
-    suspend fun invoke(commentId: Int): Boolean
+    suspend fun invoke(commentId: Long): Boolean
 }

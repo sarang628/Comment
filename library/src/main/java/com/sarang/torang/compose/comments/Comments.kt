@@ -21,19 +21,19 @@ import com.sarang.torang.data.comments.testSubComment
 internal fun Comments(
     modifier: Modifier = Modifier,
     list: List<Comment>,
-    onTop: Boolean,
-    onScrollTop: () -> Unit,
-    onDelete: (Int) -> Unit,
-    onUndo: (Int) -> Unit,
-    onFavorite: ((Int) -> Unit)? = null,
+    movePosition: Int? = null,
+    onPosition: () -> Unit,
+    onDelete: (Long) -> Unit,
+    onUndo: (Long) -> Unit,
+    onFavorite: ((Long) -> Unit)? = null,
     onReply: ((Comment) -> Unit)? = null,
     myId: Int?,
 ) {
     val listState = rememberLazyListState()
-    LaunchedEffect(key1 = onTop, block = {
-        if (onTop) {
-            listState.animateScrollToItem(index = 0)
-            onScrollTop.invoke()
+    LaunchedEffect(key1 = movePosition, block = {
+        movePosition?.let {
+            listState.animateScrollToItem(index = movePosition)
+            onPosition.invoke()
         }
     })
 
@@ -78,6 +78,6 @@ fun PreviewComments() {
             testComment(7),
             testComment(8),
         ),
-        onTop = false, onScrollTop = {}, onDelete = {}, onUndo = {}, myId = 0
+        movePosition = null, onPosition = {}, onDelete = {}, onUndo = {}, myId = 0
     )
 }

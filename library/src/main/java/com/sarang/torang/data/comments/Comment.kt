@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 
 data class Comment(
-    val commentsId: Int = Integer.MAX_VALUE,
+    val commentsId: Long = System.currentTimeMillis(),
     val userId: Int,
     val profileImageUrl: String,
     val date: String,
@@ -21,14 +21,14 @@ data class Comment(
     val isUploading: Boolean = false,
     val commentLikeId: Int? = null,
     val commentLikeCount: Int,
-    val parentCommentId: Int? = null,
+    val parentCommentId: Long? = null,
     val subCommentCount: Int? = null,
     val tagUser: TagUser? = null
 )
 
 val Comment.favoriteIcon: ImageVector get() = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
 val Comment.isFavorite: Boolean get() = commentLikeId != null
-val Comment.isSubComment: Boolean get() = (parentCommentId != null && parentCommentId != 0)
+val Comment.isSubComment: Boolean get() = (parentCommentId != null && parentCommentId != 0L)
 fun Comment.transFormComment(color: Color = Color(0xFF0000EE)): AnnotatedString {
     return if (tagUser != null) buildAnnotatedString {
         withStyle(
@@ -41,7 +41,7 @@ fun Comment.transFormComment(color: Color = Color(0xFF0000EE)): AnnotatedString 
     } else AnnotatedString(this.comment)
 }
 
-fun testComment(commentId: Int = 0): Comment {
+fun testComment(commentId: Long = 0): Comment {
     return Comment(
         commentsId = commentId,
         userId = 0,
@@ -57,7 +57,7 @@ fun testComment(commentId: Int = 0): Comment {
     )
 }
 
-fun testSubComment(commentId: Int = 0): Comment {
+fun testSubComment(commentId: Long = 0): Comment {
     return Comment(
         commentsId = commentId,
         userId = 0,

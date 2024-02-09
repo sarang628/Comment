@@ -50,6 +50,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sarang.torang.data.comments.Comment
+import com.sarang.torang.data.comments.User
 import com.sarang.torang.data.comments.testComment
 import com.sarang.torang.data.comments.testSubComment
 import com.sarang.torang.uistate.CommentsUiState
@@ -95,7 +96,7 @@ fun CommentsModal(
                 onUndo = { viewModel.onUndo(it) },
                 onDelete = { viewModel.onDelete(it) },
                 onCommentChange = { viewModel.onCommentChange(it) },
-                onScrollTop = { viewModel.onScrollTop() },
+                onScrollTop = { viewModel.onPosition() },
                 sendComment = { viewModel.sendComment() },
                 onFavorite = { viewModel.onFavorite(it) },
                 onReply = { viewModel.onReply(it) },
@@ -109,11 +110,11 @@ fun CommentModalBody(
     modifier: Modifier = Modifier,
     uiState: CommentsUiState,
     onScrollTop: () -> Unit,
-    onDelete: (Int) -> Unit,
-    onUndo: (Int) -> Unit,
+    onDelete: (Long) -> Unit,
+    onUndo: (Long) -> Unit,
     sendComment: () -> Unit,
     onCommentChange: (String) -> Unit,
-    onFavorite: ((Int) -> Unit)? = null,
+    onFavorite: ((Long) -> Unit)? = null,
     onReply: ((Comment) -> Unit)? = null,
     onClearReply: (() -> Unit)? = null
 ) {
@@ -138,13 +139,13 @@ fun CommentModalBody(
                     .heightIn(min = 350.dp)
                     .fillMaxWidth(),
                 list = uiState.list,
-                onTop = uiState.onTop,
-                onScrollTop = onScrollTop,
+                movePosition = uiState.movePosition,
+                onPosition = onScrollTop,
                 onDelete = onDelete,
                 onUndo = onUndo,
                 onFavorite = onFavorite,
                 onReply = onReply,
-                myId = uiState.myId
+                myId = uiState.writer?.userId
             )
         }
 
@@ -189,9 +190,9 @@ fun CommentModalBody(
         if (uiState.isLogin)
             InputComment(
                 modifier = Modifier.layoutId("inputComment"),
-                profileImageUrl = uiState.profileImageUrl,
+                profileImageUrl = uiState.writer?.profileUrl ?: "",
                 onSend = { sendComment() },
-                name = uiState.name,
+                name = uiState.writer?.userName ?: "",
                 input = uiState.comment,
                 onValueChange = { onCommentChange(it) },
                 replyName = uiState.reply?.name
@@ -380,7 +381,7 @@ fun PreviewCommentModalBody() {
                 testComment(7),
                 testComment(8),
             ),
-            myId = 10,
+            writer = User("", 10, ""),
             reply = testComment()
         )
     )
