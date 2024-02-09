@@ -1,5 +1,6 @@
 package com.sarang.torang.compose.comments
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,20 +36,19 @@ internal fun Comments(
     myId: Int?,
 ) {
     val listState = rememberLazyListState()
-    LaunchedEffect(key1 = movePosition, block = {
+
+    LaunchedEffect(key1 = movePosition) {
         movePosition?.let {
             listState.animateScrollToItem(index = movePosition)
-            onPosition.invoke()
+            snapshotFlow { listState.firstVisibleItemIndex }
+                .map { index -> movePosition == index }
+                .distinctUntilChanged()
+                .filter { it }
+                .collect {
+                    onPosition.invoke()
+                }
         }
-    })
-
-    /*LaunchedEffect(key1 = listState) {
-        snapshotFlow { listState.firstVisibleItemIndex }
-            .map { index -> movePosition == index }
-            .distinctUntilChanged()
-            .filter { it }
-            .collect { onPosition.invoke() }
-    }*/
+    }
 
     // https://developer.android.com/jetpack/compose/lists#content-spacing
     LazyColumn(

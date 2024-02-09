@@ -67,35 +67,37 @@ class CommentViewModel @Inject constructor(
     }
 
     fun sendComment() {
+        if (uiState.value.uploadingComment != null) {
+            _uiState.update { it.copy(snackBarMessage = "업로드 중입니다.") }
+            return
+        }
+
         if (_uiState.value.reply == null) {
-            addNewComment()
+            //리스트 코멘트 추가 및 입력창 초기화 상단으로 보내고 기다리기
+            val uploadComment = uiState.value.toComment
+            _uiState.update {
+                it.copy(
+                    list = ArrayList(it.list).apply { add(0, uploadComment) },
+                    comment = "",
+                    reply = null,
+                    uploadingComment = uploadComment,
+                    movePosition = 0
+                )
+            }
         } else {
             addReply()
         }
     }
 
-    private fun addNewComment() {
+    private fun addNewComment(comment: Comment) {
         viewModelScope.launch {
             try {
-                val comment = _uiState.value.comment
-                val list = ArrayList(_uiState.value.list).apply {
-                    add(0, uiState.value.toComment)
-                }
-                //리스트 코멘트 추가 및 입력창 초기화
-                _uiState.update {
-                    it.copy(
-                        list = list,
-                        movePosition = 0, // move to top
-                        comment = "",
-                        reply = null
-                    )
-                }
-                delay(1000) //리스트 상단으로 올라가는 시간
+                val list = ArrayList(_uiState.value.list)
                 list[0] = sendCommentUseCase.invoke(
                     reviewId = uiState.value.reviewId!!,
-                    comment = comment
+                    comment = comment.comment
                 )
-                _uiState.update { it.copy(list = list) }
+                _uiState.update { it.copy(list = list, uploadingComment = null) }
             } catch (e: Exception) {
                 _uiState.update { it.copy(snackBarMessage = e.message) }
             }
@@ -141,6 +143,13 @@ class CommentViewModel @Inject constructor(
     }
 
     fun onPosition() {
+        uiState.value.uploadingComment?.let {
+            if (it.parentCommentId != null) {
+                //addReply()
+            } else {
+                addNewComment(it)
+            }
+        }
         _uiState.update { it.copy(movePosition = null) }
     }
 

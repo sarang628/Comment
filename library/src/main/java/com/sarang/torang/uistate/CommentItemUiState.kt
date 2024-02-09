@@ -11,8 +11,8 @@ data class CommentsUiState(
     val comment: String = "",
     val movePosition: Int? = null,
     val reply: Comment? = null,
-    val writer: User? = null
-
+    val writer: User? = null,
+    val uploadingComment: Comment? = null
 )
 
 val CommentsUiState.toComment: Comment
