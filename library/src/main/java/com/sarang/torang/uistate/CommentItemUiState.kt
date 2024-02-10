@@ -16,7 +16,7 @@ data class CommentsUiState(
     val uploadingComment: Comment? = null
 )
 
-val CommentsUiState.selectedIndex: Int get() = list.indexOf(list.find { it.commentsId == reply?.commentsId })
+//val CommentsUiState.selectedIndex: Int get() = list.indexOf(list.find { it.commentsId == reply?.commentsId })
 //val CommentsUiState.selectedReplyIndex: Int get() = list.indexOf(list.find { it.commentsId == reply?.parentCommentId })
 
 fun CommentsUiState.findParentComment(comment: Comment): Comment {
@@ -48,7 +48,7 @@ fun CommentsUiState.findRootCommentId(comment: Comment): Long {
     while (!c.isRoot) {
         c = findParentComment(c)
     }
-    return comment.commentsId
+    return c.commentsId
 }
 
 val CommentsUiState.toComment: Comment
