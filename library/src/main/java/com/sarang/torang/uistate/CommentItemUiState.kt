@@ -2,6 +2,7 @@ package com.sarang.torang.uistate
 
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.User
+import com.sarang.torang.data.comments.isRoot
 
 
 data class CommentsUiState(
@@ -16,9 +17,40 @@ data class CommentsUiState(
 )
 
 val CommentsUiState.selectedIndex: Int get() = list.indexOf(list.find { it.commentsId == reply?.commentsId })
-val CommentsUiState.selectedReplyIndex: Int get() = list.indexOf(list.find { it.commentsId == uploadingComment?.parentCommentId })
+//val CommentsUiState.selectedReplyIndex: Int get() = list.indexOf(list.find { it.commentsId == reply?.parentCommentId })
+
+fun CommentsUiState.findParentComment(comment: Comment): Comment {
+    var c: Comment = comment
+    while (!c.isRoot) {
+        val temp = list.find { it.commentsId == c.parentCommentId }
+        if (temp == null)
+            return c
+        else
+            c = temp
+    }
+    return c
+}
+
+fun CommentsUiState.findRootCommentIndex(comment: Comment): Int {
+    var index = 0
+    var c: Comment = comment
+    while (!c.isRoot) {
+        c = findParentComment(c)
+    }
+    index = list.indexOf(list.find { it.commentsId == c.commentsId })
+    return index
+}
 
 val CommentsUiState.isUploading: Boolean get() = uploadingComment != null
+
+fun CommentsUiState.findRootCommentId(comment: Comment): Long {
+    var c: Comment = comment
+    while (!c.isRoot) {
+        c = findParentComment(c)
+    }
+    return comment.commentsId
+}
+
 val CommentsUiState.toComment: Comment
     get() {
         return Comment(

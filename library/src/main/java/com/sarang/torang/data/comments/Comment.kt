@@ -26,6 +26,8 @@ data class Comment(
     val tagUser: TagUser? = null
 )
 
+val Comment.isRoot: Boolean get() = parentCommentId == null || parentCommentId == 0L
+
 val Comment.favoriteIcon: ImageVector get() = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
 val Comment.isFavorite: Boolean get() = commentLikeId != null
 val Comment.isSubComment: Boolean get() = (parentCommentId != null && parentCommentId != 0L)

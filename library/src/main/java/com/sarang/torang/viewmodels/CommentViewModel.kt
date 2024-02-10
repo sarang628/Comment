@@ -6,8 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.isFavorite
 import com.sarang.torang.uistate.CommentsUiState
+import com.sarang.torang.uistate.findRootCommentId
 import com.sarang.torang.uistate.selectedIndex
-import com.sarang.torang.uistate.selectedReplyIndex
+import com.sarang.torang.uistate.findRootCommentIndex
 import com.sarang.torang.uistate.toComment
 import com.sarang.torang.usecase.comments.AddCommentLikeUseCase
 import com.sarang.torang.usecase.comments.DeleteCommentLikeUseCase
@@ -70,31 +71,25 @@ class CommentViewModel @Inject constructor(
 
     fun sendComment() {
         if (_uiState.value.reply == null) {
-            //리스트 코멘트 추가 및 입력창 초기화 상단으로 보내고 기다리기
             val uploadComment = uiState.value.toComment
             _uiState.update {
                 it.copy(
                     list = ArrayList(it.list).apply { add(0, uploadComment) },
-                    comment = "",
-                    reply = null,
-                    uploadingComment = uploadComment,
-                    movePosition = 0
+                    comment = "", // 입력창 초기화
+                    reply = null, // 댓글 초기화
+                    movePosition = 0, // 최상단 위치이동
+                    uploadingComment = uploadComment // 업로드 코멘트 임시 저장
                 )
             }
         } else {
-            // 하위 코멘트로 추가하기
-            val modList = ArrayList(uiState.value.list)
             val uploadComment = uiState.value.toComment
-            val selectedIndex = uiState.value.selectedIndex
-            // 코멘트 추가
-            modList.add(selectedIndex + 1, uploadComment)
             _uiState.update {
                 it.copy(
-                    list = modList,
-                    comment = "",
-                    reply = null,
-                    movePosition = selectedIndex,
-                    uploadingComment = uploadComment
+                    list = ArrayList(it.list).apply { add(it.selectedIndex + 1, uploadComment) },
+                    comment = "", // 입력창 초기화
+                    reply = null, // 댓글 초기화
+                    movePosition = it.selectedIndex, // 댓글 상단 위치 이동
+                    uploadingComment = uploadComment // 업로드 코멘트 임시 저장
                 )
             }
         }
@@ -118,11 +113,13 @@ class CommentViewModel @Inject constructor(
     private fun addReply(comment: Comment) {
         viewModelScope.launch {
             try {
+                val uploadComment =
+                    uiState.value.uploadingComment ?: throw Exception("전송할 코멘트 정보가 없습니다.")
                 val modList = ArrayList(uiState.value.list)
-                val selectedIndex = uiState.value.selectedReplyIndex
+                val selectedIndex = uiState.value.findRootCommentIndex(uploadComment)
                 modList[selectedIndex + 1] = sendReplyUseCase.invoke(
                     reviewId = uiState.value.reviewId!!,
-                    parentCommentId = comment.parentCommentId!!,
+                    parentCommentId = uiState.value.findRootCommentId(uploadComment),
                     comment = comment.comment
                 )
                 _uiState.update { it.copy(list = modList, uploadingComment = null) }
