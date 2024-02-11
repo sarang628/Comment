@@ -14,6 +14,7 @@ import com.sarang.torang.usecase.comments.DeleteCommentLikeUseCase
 import com.sarang.torang.usecase.comments.DeleteCommentUseCase
 import com.sarang.torang.usecase.comments.GetCommentsUseCase
 import com.sarang.torang.usecase.comments.GetUserUseCase
+import com.sarang.torang.usecase.comments.LoadMoreUseCase
 import com.sarang.torang.usecase.comments.SendCommentUseCase
 import com.sarang.torang.usecase.comments.SendReplyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +34,8 @@ class CommentViewModel @Inject constructor(
     private val deleteCommentUseCase: DeleteCommentUseCase,
     private val addCommentUseCase: AddCommentLikeUseCase,
     private val deleteCommentLikeUseCaes: DeleteCommentLikeUseCase,
-    private val sendReplyUseCase: SendReplyUseCase
+    private val sendReplyUseCase: SendReplyUseCase,
+    private val loadMoreUseCase: LoadMoreUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CommentsUiState())
     val uiState = _uiState.asStateFlow()
@@ -84,7 +86,12 @@ class CommentViewModel @Inject constructor(
             val uploadComment = uiState.value.toComment
             _uiState.update {
                 it.copy(
-                    list = ArrayList(it.list).apply { add(it.findRootCommentIndex(uploadComment) + 1, uploadComment) },
+                    list = ArrayList(it.list).apply {
+                        add(
+                            it.findRootCommentIndex(uploadComment) + 1,
+                            uploadComment
+                        )
+                    },
                     comment = "", // 입력창 초기화
                     reply = null, // 댓글 초기화
                     movePosition = it.findRootCommentIndex(uploadComment), // 댓글 상단 위치 이동
@@ -226,5 +233,25 @@ class CommentViewModel @Inject constructor(
 
     fun onClearReply() {
         _uiState.update { it.copy(reply = null) }
+    }
+
+    fun onViewMore(commentId: Long) {
+        val lastId = uiState.value.list.filter { it.parentCommentId == commentId }
+            .map { it.commentsId }
+            .min()
+
+        viewModelScope.launch {
+            val result = loadMoreUseCase.invoke(lastId.toInt())
+
+            uiState.value.list.find { it.commentsId == commentId }?.let {
+                val index = uiState.value.findRootCommentIndex(it)
+                val list = ArrayList(uiState.value.list)
+                list.addAll(index + 1, result)
+                _uiState.update {
+                    it.copy(list = list)
+                }
+            }
+        }
+
     }
 }

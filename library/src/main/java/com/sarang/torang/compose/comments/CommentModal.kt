@@ -101,7 +101,8 @@ fun CommentsModal(
                 sendComment = { viewModel.sendComment() },
                 onFavorite = { viewModel.onFavorite(it) },
                 onReply = { viewModel.onReply(it) },
-                onClearReply = { viewModel.onClearReply() })
+                onClearReply = { viewModel.onClearReply() },
+                onViewMore = { viewModel.onViewMore(it) })
         }
     }
 }
@@ -117,7 +118,8 @@ fun CommentModalBody(
     onCommentChange: (String) -> Unit,
     onFavorite: ((Long) -> Unit)? = null,
     onReply: ((Comment) -> Unit)? = null,
-    onClearReply: (() -> Unit)? = null
+    onClearReply: (() -> Unit)? = null,
+    onViewMore: ((Long) -> Unit)? = null
 ) {
     ConstraintLayout(
         modifier = modifier
@@ -146,7 +148,8 @@ fun CommentModalBody(
                 onUndo = onUndo,
                 onFavorite = onFavorite,
                 onReply = onReply,
-                myId = uiState.writer?.userId
+                myId = uiState.writer?.userId,
+                onViewMore = onViewMore
             )
         }
 

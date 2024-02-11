@@ -58,7 +58,8 @@ import kotlinx.coroutines.launch
 fun Comment(
     comment: Comment,
     onFavorite: (() -> Unit)? = null,
-    onReply: (() -> Unit)? = null
+    onReply: (() -> Unit)? = null,
+    onViewMore: (() -> Unit)? = null
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -113,7 +114,11 @@ fun Comment(
         Text(text = comment.commentLikeCount.toString(), Modifier.layoutId("likeCount"))
 
         if (comment.subCommentCount != null && comment.subCommentCount > 0) {
-            MoreReply(Modifier.layoutId("moreReply"), comment.subCommentCount)
+            MoreReply(
+                Modifier.layoutId("moreReply"),
+                comment.subCommentCount,
+                onViewMore = onViewMore
+            )
         }
     }
 }
@@ -186,7 +191,8 @@ fun SwipeToDismissComment(
     onUndo: (Long) -> Unit,
     onFavorite: ((Long) -> Unit)? = null,
     onReply: ((Comment) -> Unit)? = null,
-    myId: Int?
+    myId: Int?,
+    onViewMore: (() -> Unit)? = null
 ) {
     val coroutineScope = rememberCoroutineScope()
     var confirm by remember { mutableStateOf(false) }
@@ -221,7 +227,8 @@ fun SwipeToDismissComment(
     }, dismissContent = {
         Comment(comment = comment,
             onFavorite = { onFavorite?.invoke(comment.commentsId) },
-            onReply = { onReply?.invoke(comment) })
+            onReply = { onReply?.invoke(comment) },
+            onViewMore = onViewMore)
     }, directions = if (comment.userId == myId) setOf(DismissDirection.EndToStart) else setOf()
     )
 }
@@ -265,10 +272,13 @@ fun Undo(
 
 @Preview
 @Composable
-fun MoreReply(modifier: Modifier = Modifier, count: Int? = 0) {
+fun MoreReply(modifier: Modifier = Modifier, count: Int? = 0, onViewMore: (() -> Unit)? = null) {
     Row(
         modifier
             .fillMaxWidth()
+            .clickable {
+                onViewMore?.invoke()
+            }
             .height(30.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.width(50.dp))
@@ -317,7 +327,7 @@ fun PreviewUndo() {
 @Preview
 @Composable
 fun PreviewSwipeToDismissComment() {
-    SwipeToDismissComment(
+    SwipeToDismissComment(/*Preview*/
         comment = testComment(),
         onDelete = {},
         onUndo = {},
@@ -328,11 +338,15 @@ fun PreviewSwipeToDismissComment() {
 @Preview
 @Composable
 fun PreviewComment() {
-    Comment(comment = testComment())
+    Comment(/*Preview*/
+        comment = testComment()
+    )
 }
 
 @Preview
 @Composable
 fun PreviewSubComment() {
-    Comment(comment = testSubComment())
+    Comment(/*Preview*/
+        comment = testSubComment()
+    )
 }

@@ -1,6 +1,5 @@
 package com.sarang.torang.compose.comments
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.testComment
 import com.sarang.torang.data.comments.testSubComment
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
@@ -34,6 +32,7 @@ internal fun Comments(
     onFavorite: ((Long) -> Unit)? = null,
     onReply: ((Comment) -> Unit)? = null,
     myId: Int?,
+    onViewMore: ((Long) -> Unit)? = null
 ) {
     val listState = rememberLazyListState()
 
@@ -65,7 +64,8 @@ internal fun Comments(
                         onUndo = onUndo,
                         myId = myId,
                         onFavorite = onFavorite,
-                        onReply = onReply
+                        onReply = onReply,
+                        onViewMore = { onViewMore?.invoke(comment.commentsId) }
                     )
                 }
             }
