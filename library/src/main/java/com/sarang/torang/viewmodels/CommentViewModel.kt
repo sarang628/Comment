@@ -8,6 +8,7 @@ import com.sarang.torang.data.comments.isFavorite
 import com.sarang.torang.uistate.CommentsUiState
 import com.sarang.torang.uistate.findRootCommentId
 import com.sarang.torang.uistate.findRootCommentIndex
+import com.sarang.torang.uistate.findTailCommentIndex
 import com.sarang.torang.uistate.toComment
 import com.sarang.torang.usecase.comments.AddCommentLikeUseCase
 import com.sarang.torang.usecase.comments.DeleteCommentLikeUseCase
@@ -58,11 +59,13 @@ class CommentViewModel @Inject constructor(
     fun loadComment(reviewId: Int) {
         viewModelScope.launch {
             try {
-                _uiState.update {
-                    it.copy(
-                        list = getCommentsUseCase.invoke(reviewId = reviewId),
-                        reviewId = reviewId
-                    )
+                getCommentsUseCase.invoke(reviewId = reviewId).collectLatest { list ->
+                    _uiState.update {
+                        it.copy(
+                            list = list,
+                            reviewId = reviewId
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 _uiState.update { it.copy(snackBarMessage = e.message) }
@@ -88,13 +91,13 @@ class CommentViewModel @Inject constructor(
                 it.copy(
                     list = ArrayList(it.list).apply {
                         add(
-                            it.findRootCommentIndex(uploadComment) + 1,
+                            it.findTailCommentIndex(uploadComment) + 1,
                             uploadComment
                         )
                     },
                     comment = "", // 입력창 초기화
                     reply = null, // 댓글 초기화
-                    movePosition = it.findRootCommentIndex(uploadComment), // 댓글 상단 위치 이동
+                    movePosition = it.findTailCommentIndex(uploadComment), // 댓글 상단 위치 이동
                     uploadingComment = uploadComment // 업로드 코멘트 임시 저장
                 )
             }
@@ -122,7 +125,7 @@ class CommentViewModel @Inject constructor(
                 val uploadComment =
                     uiState.value.uploadingComment ?: throw Exception("전송할 코멘트 정보가 없습니다.")
                 val modList = ArrayList(uiState.value.list)
-                val selectedIndex = uiState.value.findRootCommentIndex(uploadComment)
+                val selectedIndex = uiState.value.findTailCommentIndex(uploadComment)
                 modList[selectedIndex + 1] = sendReplyUseCase.invoke(
                     reviewId = uiState.value.reviewId!!,
                     parentCommentId = uiState.value.findRootCommentId(uploadComment),
@@ -240,8 +243,11 @@ class CommentViewModel @Inject constructor(
             .map { it.commentsId }
             .min()
 
+
+
         viewModelScope.launch {
-            val result = loadMoreUseCase.invoke(lastId.toInt())
+            loadMoreUseCase.invoke(lastId.toInt())
+            /*val result = loadMoreUseCase.invoke(lastId.toInt())
 
             uiState.value.list.find { it.commentsId == commentId }?.let {
                 val index = uiState.value.findRootCommentIndex(it)
@@ -250,7 +256,7 @@ class CommentViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(list = list)
                 }
-            }
+            }*/
         }
 
     }

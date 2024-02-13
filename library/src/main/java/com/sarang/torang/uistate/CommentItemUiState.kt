@@ -31,6 +31,22 @@ fun CommentsUiState.findParentComment(comment: Comment): Comment {
     return c
 }
 
+fun CommentsUiState.findTailCommentIndex(comment: Comment): Int {
+    val index: Int
+    var c: Comment = comment
+    c = findTailComment(c)
+    index = list.indexOf(list.find { it.commentsId == c.commentsId })
+    return index
+}
+
+fun CommentsUiState.findTailComment(comment: Comment): Comment {
+    var c: Comment = comment
+    list.findLast { it.parentCommentId == comment.parentCommentId }?.let {
+        c = it
+    }
+    return c
+}
+
 fun CommentsUiState.findRootCommentIndex(comment: Comment): Int {
     var index = 0
     var c: Comment = comment
