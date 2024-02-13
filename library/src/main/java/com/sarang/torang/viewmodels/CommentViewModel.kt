@@ -7,8 +7,6 @@ import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.isFavorite
 import com.sarang.torang.uistate.CommentsUiState
 import com.sarang.torang.uistate.findRootCommentId
-import com.sarang.torang.uistate.findRootCommentIndex
-import com.sarang.torang.uistate.findTailCommentIndex
 import com.sarang.torang.uistate.toComment
 import com.sarang.torang.usecase.comments.AddCommentLikeUseCase
 import com.sarang.torang.usecase.comments.DeleteCommentLikeUseCase
@@ -77,63 +75,40 @@ class CommentViewModel @Inject constructor(
         if (_uiState.value.reply == null) {
             val uploadComment = uiState.value.toComment
             _uiState.update {
+                viewModelScope.launch {
+                    try {
+                        sendCommentUseCase.invoke(
+                            reviewId = uiState.value.reviewId!!,
+                            comment = uiState.value.comment
+                        )
+                    } catch (e: Exception) {
+                        _uiState.update { it.copy(snackBarMessage = e.message) }
+                    }
+                }
                 it.copy(
-                    list = ArrayList(it.list).apply { add(0, uploadComment) },
                     comment = "", // 입력창 초기화
                     reply = null, // 댓글 초기화
-                    movePosition = 0, // 최상단 위치이동
-                    uploadingComment = uploadComment // 업로드 코멘트 임시 저장
                 )
             }
         } else {
-            val uploadComment = uiState.value.toComment
-            _uiState.update {
-                it.copy(
-                    list = ArrayList(it.list).apply {
-                        add(
-                            it.findTailCommentIndex(uploadComment) + 1,
-                            uploadComment
+            viewModelScope.launch {
+                try {
+                    val uploadComment =
+                        uiState.value.uploadingComment ?: throw Exception("전송할 코멘트 정보가 없습니다.")
+                    sendReplyUseCase.invoke(
+                        reviewId = uiState.value.reviewId!!,
+                        parentCommentId = uiState.value.findRootCommentId(uploadComment),
+                        comment = uiState.value.comment
+                    )
+                    _uiState.update {
+                        it.copy(
+                            comment = "", // 입력창 초기화
+                            reply = null, // 댓글 초기화
                         )
-                    },
-                    comment = "", // 입력창 초기화
-                    reply = null, // 댓글 초기화
-                    movePosition = it.findTailCommentIndex(uploadComment), // 댓글 상단 위치 이동
-                    uploadingComment = uploadComment // 업로드 코멘트 임시 저장
-                )
-            }
-        }
-    }
-
-    private fun addNewComment(comment: Comment) {
-        viewModelScope.launch {
-            try {
-                val list = ArrayList(_uiState.value.list)
-                list[0] = sendCommentUseCase.invoke(
-                    reviewId = uiState.value.reviewId!!,
-                    comment = comment.comment
-                )
-                _uiState.update { it.copy(list = list, uploadingComment = null) }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(snackBarMessage = e.message) }
-            }
-        }
-    }
-
-    private fun addReply(comment: Comment) {
-        viewModelScope.launch {
-            try {
-                val uploadComment =
-                    uiState.value.uploadingComment ?: throw Exception("전송할 코멘트 정보가 없습니다.")
-                val modList = ArrayList(uiState.value.list)
-                val selectedIndex = uiState.value.findTailCommentIndex(uploadComment)
-                modList[selectedIndex + 1] = sendReplyUseCase.invoke(
-                    reviewId = uiState.value.reviewId!!,
-                    parentCommentId = uiState.value.findRootCommentId(uploadComment),
-                    comment = comment.comment
-                )
-                _uiState.update { it.copy(list = modList, uploadingComment = null) }
-            } catch (e: Exception) {
-                Log.e("_CommentViewModel", e.toString())
+                    }
+                } catch (e: Exception) {
+                    Log.e("_CommentViewModel", e.toString())
+                }
             }
         }
     }
@@ -147,13 +122,6 @@ class CommentViewModel @Inject constructor(
     }
 
     fun onPosition() {
-        uiState.value.uploadingComment?.let {
-            if (it.parentCommentId != null) {
-                addReply(it)
-            } else {
-                addNewComment(it)
-            }
-        }
         _uiState.update { it.copy(movePosition = null) }
     }
 

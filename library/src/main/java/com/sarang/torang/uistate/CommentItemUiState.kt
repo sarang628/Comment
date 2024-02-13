@@ -16,9 +16,6 @@ data class CommentsUiState(
     val uploadingComment: Comment? = null
 )
 
-//val CommentsUiState.selectedIndex: Int get() = list.indexOf(list.find { it.commentsId == reply?.commentsId })
-//val CommentsUiState.selectedReplyIndex: Int get() = list.indexOf(list.find { it.commentsId == reply?.parentCommentId })
-
 fun CommentsUiState.findParentComment(comment: Comment): Comment {
     var c: Comment = comment
     while (!c.isRoot) {
@@ -29,32 +26,6 @@ fun CommentsUiState.findParentComment(comment: Comment): Comment {
             c = temp
     }
     return c
-}
-
-fun CommentsUiState.findTailCommentIndex(comment: Comment): Int {
-    val index: Int
-    var c: Comment = comment
-    c = findTailComment(c)
-    index = list.indexOf(list.find { it.commentsId == c.commentsId })
-    return index
-}
-
-fun CommentsUiState.findTailComment(comment: Comment): Comment {
-    var c: Comment = comment
-    list.findLast { it.parentCommentId == comment.parentCommentId }?.let {
-        c = it
-    }
-    return c
-}
-
-fun CommentsUiState.findRootCommentIndex(comment: Comment): Int {
-    var index = 0
-    var c: Comment = comment
-    while (!c.isRoot) {
-        c = findParentComment(c)
-    }
-    index = list.indexOf(list.find { it.commentsId == c.commentsId })
-    return index
 }
 
 val CommentsUiState.isUploading: Boolean get() = uploadingComment != null
