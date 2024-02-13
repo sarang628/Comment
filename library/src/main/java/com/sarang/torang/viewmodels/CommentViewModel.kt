@@ -210,21 +210,8 @@ class CommentViewModel @Inject constructor(
         val lastId = uiState.value.list.filter { it.parentCommentId == commentId }
             .map { it.commentsId }
             .min()
-
-
-
         viewModelScope.launch {
             loadMoreUseCase.invoke(lastId.toInt())
-            /*val result = loadMoreUseCase.invoke(lastId.toInt())
-
-            uiState.value.list.find { it.commentsId == commentId }?.let {
-                val index = uiState.value.findRootCommentIndex(it)
-                val list = ArrayList(uiState.value.list)
-                list.addAll(index + 1, result)
-                _uiState.update {
-                    it.copy(list = list)
-                }
-            }*/
         }
 
     }
