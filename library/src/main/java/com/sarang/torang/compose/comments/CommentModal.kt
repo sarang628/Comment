@@ -331,7 +331,7 @@ fun InputComment(
                 }
             }
         )
-        Button(onClick = { onSend.invoke() }, enabled = !isUploading) {
+        Button(onClick = { onSend.invoke() }, enabled = (!isUploading && input.isNotEmpty())) {
             Text(text = "send")
         }
     }
