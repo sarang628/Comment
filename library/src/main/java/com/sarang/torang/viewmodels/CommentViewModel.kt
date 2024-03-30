@@ -74,22 +74,40 @@ class CommentViewModel @Inject constructor(
     fun sendComment() {
         if (_uiState.value.reply == null) {
             val uploadComment = uiState.value.toComment
-            _uiState.update {
-                viewModelScope.launch {
-                    try {
-                        sendCommentUseCase.invoke(
-                            reviewId = uiState.value.reviewId!!,
-                            comment = uiState.value.comment
+            viewModelScope.launch {
+                // 아래서 입력 데이터를 초기화하여 서버에 우선 전송
+                var result: Comment? = null
+                try {
+                    result = sendCommentUseCase.invoke(
+                        reviewId = uiState.value.reviewId!!,
+                        comment = uiState.value.comment
+                    )
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(snackBarMessage = e.message) }
+                }
+
+                _uiState.update {
+                    it.copy(
+                        list = ArrayList(it.list).apply { add(0, uploadComment) }, // 업로드 중인 코멘트 추가
+                        movePosition = 0, // 첫번째 위치로 이동
+                        comment = "", // 입력창 초기화
+                        reply = null, // 댓글 초기화
+                    )
+                }
+
+                // 화면 올라가는 동안 딜레이
+                delay(1000)
+
+                // 코멘트 전송 결과값 적용
+                result?.let { result ->
+                    _uiState.update {
+                        it.copy(
+                            list = ArrayList(it.list).apply { set(0, result) } // 업로드 완료 코멘트
                         )
-                    } catch (e: Exception) {
-                        _uiState.update { it.copy(snackBarMessage = e.message) }
                     }
                 }
-                it.copy(
-                    comment = "", // 입력창 초기화
-                    reply = null, // 댓글 초기화
-                )
             }
+
         } else {
             viewModelScope.launch {
                 try {

@@ -11,6 +11,18 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 
+/**
+ * Comment
+ * @param commentsId lazyColunm에 key값으로 사용 어떤 용도인지 까먹음
+ * @param userId 사용자 ID swipe로 글을 지울 때 내 글만 삭제 요청을 하기위해 사용
+ * @param profileImageUrl 프로필 이미지 url
+ * @param date comment 작성일
+ * @param name 작성자명
+ * @param isUploading 업로드 중인지
+ * @param commentLikeCount 좋아요 개수
+ * @param subCommentCount 대댓글 개수
+ * @param tagUser 대댓글 태그된 사용자
+ */
 data class Comment(
     val commentsId: Long = System.currentTimeMillis(),
     val userId: Int,

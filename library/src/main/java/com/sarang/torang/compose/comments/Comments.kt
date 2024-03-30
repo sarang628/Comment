@@ -78,7 +78,7 @@ fun PreviewComments() {
     Comments(/*preview*/
         modifier = Modifier,
         list = arrayListOf(
-            testComment(0),
+            testComment(0).copy(isUploading = true),
             testComment(1),
             testComment(2),
             testSubComment(9),

@@ -4,7 +4,6 @@ import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.User
 import com.sarang.torang.data.comments.isRoot
 
-
 data class CommentsUiState(
     val reviewId: Int? = null,
     val list: List<Comment> = listOf(),
