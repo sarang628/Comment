@@ -328,7 +328,7 @@ fun PreviewUndo() {
 @Composable
 fun PreviewSwipeToDismissComment() {
     SwipeToDismissComment(/*Preview*/
-        comment = testComment(),
+        comment = testComment().copy(isUploading = true),
         onDelete = {},
         onUndo = {},
         myId = 0

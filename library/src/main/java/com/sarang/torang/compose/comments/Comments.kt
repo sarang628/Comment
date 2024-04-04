@@ -1,5 +1,6 @@
 package com.sarang.torang.compose.comments
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,8 @@ internal fun Comments(
     onViewMore: ((Long) -> Unit)? = null
 ) {
     val listState = rememberLazyListState()
+
+    Log.d("__sryang", "list[0]: ${list[0]} movePosition : ${movePosition}")
 
     LaunchedEffect(key1 = movePosition) {
         movePosition?.let {
