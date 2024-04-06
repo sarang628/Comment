@@ -24,4 +24,5 @@ ext {
     torangRepositoryVersion = '9ede76202f'
     torangBottomSheetVersion = '19e86938f4'
     commonImageLoaderVersion = 'eec41c7609'
+    torangBottomSheetVersion = 'c453a8c9b3'
 }
