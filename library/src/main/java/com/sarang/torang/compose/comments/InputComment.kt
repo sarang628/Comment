@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,7 +49,7 @@ fun InputComment(
     Row(
         modifier
             .height(50.dp)
-            .background(Color.LightGray)
+            .background(MaterialTheme.colorScheme.onSecondary)
             .padding(top = 7.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         TorangAsyncImage(

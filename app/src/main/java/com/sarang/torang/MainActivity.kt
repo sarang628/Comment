@@ -19,7 +19,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.samples.apps.sunflower.ui.TorangTheme
+import com.sarang.torang.compose.comments.CommentBottomSheet
 import com.sarang.torang.compose.comments.CommentsModal
+import com.sarang.torang.compose.comments.PreviewCommentBottomSheet
 import com.sarang.torang.compose.comments.PreviewComments
 import com.sarang.torang.repository.LoginRepository
 import com.sarang.torang.repository.LoginRepositoryTest
@@ -36,28 +38,47 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             var showComment by remember { mutableStateOf(false) }
+            var showCommentDialog by remember { mutableStateOf(false) }
             TorangTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column {
-                        Box {
+                    Box(modifier = Modifier) {
+                        Column {
                             Button(onClick = {
                                 showComment = true
                             }) {
                                 Text(text = "showComment")
                             }
+
+                            Button(onClick = {
+                                showCommentDialog = true
+                            }) {
+                                Text(text = "showCommentDialog")
+                            }
+                            LoginRepositoryTest(loginRepository = loginRepository)
                         }
-                        if (showComment)
-                            CommentsModal(
+                        if (showComment) {
+                            CommentBottomSheet(
                                 reviewId = 329,
                                 onDismissRequest = {
                                     showComment = false
+                                }
+                            ) {
+
+                            }
+                        }
+
+                        if (showCommentDialog) {
+                            CommentsModal(
+                                reviewId = 329,
+                                onDismissRequest = {
+                                    showCommentDialog = false
                                 },
                             )
-                        LoginRepositoryTest(loginRepository = loginRepository)
+                        }
                     }
                 }
             }

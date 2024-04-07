@@ -1,12 +1,29 @@
 package com.sarang.torang.compose.comments
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
@@ -16,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.User
 import com.sarang.torang.data.comments.testComment
@@ -23,14 +41,82 @@ import com.sarang.torang.data.comments.testSubComment
 import com.sarang.torang.uistate.CommentsUiState
 import com.sarang.torang.uistate.isLogin
 import com.sarang.torang.uistate.isUploading
+import com.sarang.torang.viewmodels.CommentViewModel
 import com.sryang.torang.compose.bottomsheet.bottomsheetscaffold.TorangCommentBottomSheetScaffold
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CommentBottomSheet(
+    viewModel: CommentViewModel = hiltViewModel(),
+    reviewId: Int,
+    onDismissRequest: () -> Unit,
+    content: @Composable (PaddingValues) -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val sheetState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
+    )
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = uiState.snackBarMessage, block = {
+        uiState.snackBarMessage?.let {
+            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
+            viewModel.clearErrorMessage()
+        }
+    })
+
+    LaunchedEffect(key1 = reviewId, block = {
+        viewModel.loadComment(reviewId)
+    })
+
+    LaunchedEffect(key1 = sheetState.bottomSheetState.currentValue) {
+        snapshotFlow { sheetState.bottomSheetState.currentValue }.collect {
+            if (it == SheetValue.Hidden) {
+                onDismissRequest.invoke()
+            }
+        }
+    }
+
+    TorangCommentBottomSheetScaffold(
+        scaffoldState = sheetState,
+        input = {
+            InputCommentForSticky(
+                uiState = uiState,
+                sendComment = { viewModel.sendComment() },
+                onCommentChange = { viewModel.onCommentChange(it) },
+                onClearReply = { viewModel.onClearReply() }
+            )
+        },
+        sheetPeekHeight = 400.dp,
+        inputHiddenOffset = 200.dp,
+        sheetContent = {
+            Column {
+                CommentBottomSheetBody(
+                    modifier = Modifier,
+                    uiState = uiState,
+                    onUndo = { viewModel.onUndo(it) },
+                    onDelete = { viewModel.onDelete(it) },
+                    onCommentChange = { viewModel.onCommentChange(it) },
+                    onScrollTop = { viewModel.onPosition() },
+                    sendComment = { viewModel.sendComment() },
+                    onFavorite = { viewModel.onFavorite(it) },
+                    onReply = { viewModel.onReply(it) },
+                    onClearReply = { viewModel.onClearReply() },
+                    onViewMore = { viewModel.onViewMore(it) })
+            }
+        },
+        content = content
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun CommentBottomSheet() {
+fun PreviewCommentBottomSheet() {
     TorangCommentBottomSheetScaffold(input = { PreviewInputCommentSticky() }, sheetContent = {
         PreviewCommentBody()
-    }, sheetPeekHeight = 400.dp) {
+    }, sheetPeekHeight = 400.dp, inputHiddenOffset = 150.dp) {
 
     }
 }
@@ -51,6 +137,7 @@ fun CommentBottomSheetBody(
 ) {
     ConstraintLayout(
         modifier = modifier
+            .padding(bottom = if (uiState.reply != null) 100.dp else 50.dp)
             .fillMaxSize(),
         constraintSet = commentsBottomSheetConstraintSet()
     ) {
