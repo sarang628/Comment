@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
@@ -51,12 +52,13 @@ fun CommentBottomSheet(
     viewModel: CommentViewModel = hiltViewModel(),
     reviewId: Int,
     onDismissRequest: () -> Unit,
-    content: @Composable (PaddingValues) -> Unit
-) {
-    val uiState by viewModel.uiState.collectAsState()
-    val sheetState = rememberBottomSheetScaffoldState(
+    sheetState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
-    )
+    ),
+    content: @Composable (PaddingValues) -> Unit,
+
+    ) {
+    val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = uiState.snackBarMessage, block = {
