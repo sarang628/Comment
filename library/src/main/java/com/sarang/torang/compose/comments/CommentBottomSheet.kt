@@ -82,6 +82,7 @@ fun CommentBottomSheet(
 
     TorangCommentBottomSheetScaffold(
         scaffoldState = sheetState,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         input = {
             InputCommentForSticky(
                 uiState = uiState,

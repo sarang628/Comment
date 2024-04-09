@@ -37,7 +37,6 @@ internal fun Comments(
 ) {
     val listState = rememberLazyListState()
 
-    Log.d("__sryang", "list[0]: ${list[0]} movePosition : ${movePosition}")
 
     LaunchedEffect(key1 = movePosition) {
         movePosition?.let {

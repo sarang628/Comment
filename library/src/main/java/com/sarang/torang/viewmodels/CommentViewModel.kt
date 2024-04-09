@@ -96,11 +96,12 @@ class CommentViewModel @Inject constructor(
             viewModelScope.launch {
                 try {
                     val uploadComment =
-                        uiState.value.uploadingComment ?: throw Exception("전송할 코멘트 정보가 없습니다.")
+                        uiState.value.reply ?: throw Exception("전송할 코멘트 정보가 없습니다.")
                     sendReplyUseCase.invoke(
                         reviewId = uiState.value.reviewId!!,
                         parentCommentId = uiState.value.findRootCommentId(uploadComment),
-                        comment = uiState.value.comment
+                        comment = uiState.value.comment,
+                        onLocalUpdated = {}
                     )
                     _uiState.update {
                         it.copy(
@@ -109,6 +110,9 @@ class CommentViewModel @Inject constructor(
                         )
                     }
                 } catch (e: Exception) {
+                    _uiState.update {
+                        it.copy(snackBarMessage = e.message)
+                    }
                     Log.e("_CommentViewModel", e.toString())
                 }
             }
