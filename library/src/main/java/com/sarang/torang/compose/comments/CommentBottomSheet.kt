@@ -1,5 +1,6 @@
 package com.sarang.torang.compose.comments
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,21 +10,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,22 +43,40 @@ import com.sarang.torang.uistate.isLogin
 import com.sarang.torang.uistate.isUploading
 import com.sarang.torang.viewmodels.CommentViewModel
 import com.sryang.torang.compose.bottomsheet.bottomsheetscaffold.TorangCommentBottomSheetScaffold
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentBottomSheet(
     viewModel: CommentViewModel = hiltViewModel(),
-    reviewId: Int,
+    reviewId: Int? = null,
     onDismissRequest: () -> Unit,
     sheetState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
     ),
+    onBackPressed: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 
     ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val coroutine = rememberCoroutineScope()
+
+    BackHandler {
+        coroutine.launch {
+            if (sheetState.bottomSheetState.currentValue != SheetValue.Hidden) {
+                sheetState.bottomSheetState.hide()
+                viewModel.onClear()
+            } else {
+                onBackPressed.invoke()
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = reviewId) {
+        viewModel.loadComment(reviewId)
+    }
 
     LaunchedEffect(key1 = uiState.snackBarMessage, block = {
         uiState.snackBarMessage?.let {
@@ -68,14 +85,11 @@ fun CommentBottomSheet(
         }
     })
 
-    LaunchedEffect(key1 = reviewId, block = {
-        viewModel.loadComment(reviewId)
-    })
-
     LaunchedEffect(key1 = sheetState.bottomSheetState.currentValue) {
         snapshotFlow { sheetState.bottomSheetState.currentValue }.collect {
             if (it == SheetValue.Hidden) {
                 onDismissRequest.invoke()
+                viewModel.onClear()
             }
         }
     }

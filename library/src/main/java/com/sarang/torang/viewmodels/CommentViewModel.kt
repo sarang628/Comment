@@ -48,13 +48,24 @@ class CommentViewModel @Inject constructor(
                         it.copy(writer = user)
                     }
                 } else {
-                    _uiState.update { it.copy(writer = null, snackBarMessage = "로그인을 해주세요.") }
+                    Log.e("__sryang", "로그인을 해주세요. by init")
+                    _uiState.update {
+                        it.copy(
+                            writer = null,
+                            snackBarMessage = "로그인을 해주세요. by init"
+                        )
+                    }
                 }
             }
         }
     }
 
-    fun loadComment(reviewId: Int) {
+    fun loadComment(reviewId: Int?) {
+        Log.d("__sryang", "loadComment: ${reviewId}")
+        if (reviewId == null) {
+            onClear()
+            return
+        }
         viewModelScope.launch {
             try {
                 getCommentsUseCase.invoke(reviewId = reviewId).collectLatest { list ->
@@ -66,6 +77,7 @@ class CommentViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                Log.e("__sryang", "{$e} by loadComment")
                 _uiState.update { it.copy(snackBarMessage = e.message) }
             }
         }
@@ -210,6 +222,10 @@ class CommentViewModel @Inject constructor(
 
     fun onClearReply() {
         _uiState.update { it.copy(reply = null) }
+    }
+
+    fun onClear() {
+        _uiState.update { it.copy(reply = null, list = listOf()) }
     }
 
     fun onViewMore(commentId: Long) {

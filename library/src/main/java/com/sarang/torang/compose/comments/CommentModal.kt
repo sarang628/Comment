@@ -38,11 +38,14 @@ import com.sarang.torang.uistate.isLogin
 import com.sarang.torang.uistate.isUploading
 import com.sarang.torang.viewmodels.CommentViewModel
 
+/**
+ * @param reviewId sheet를 Hidden 시킬 때 reviewId를 null로 넘기면 화면이 초기화 됩니다.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsModal(
     viewModel: CommentViewModel = hiltViewModel(),
-    reviewId: Int,
+    reviewId: Int?,
     onDismissRequest: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
