@@ -22,7 +22,6 @@ ext {
 
     themeVersion = '28a1702347'
     torangRepositoryVersion = 'e08e769c25'
-    torangBottomSheetVersion = '19e86938f4'
+    torangBottomSheetVersion = 'c782d170eb'
     commonImageLoaderVersion = 'eec41c7609'
-    torangBottomSheetVersion = '53081bc933'
 }

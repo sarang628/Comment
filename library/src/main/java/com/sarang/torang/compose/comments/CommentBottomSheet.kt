@@ -56,9 +56,9 @@ fun CommentBottomSheet(
         bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
     ),
     onBackPressed: () -> Unit,
-    content: @Composable (PaddingValues) -> Unit,
-
-    ) {
+    init : Boolean = false,
+    content: @Composable (PaddingValues) -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutine = rememberCoroutineScope()
@@ -96,6 +96,7 @@ fun CommentBottomSheet(
 
     TorangCommentBottomSheetScaffold(
         scaffoldState = sheetState,
+        init = init,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         input = {
             InputCommentForSticky(

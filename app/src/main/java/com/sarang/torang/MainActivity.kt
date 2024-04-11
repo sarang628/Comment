@@ -54,9 +54,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             var showCommentDialog by remember { mutableStateOf(false) }
             val coroutine = rememberCoroutineScope()
+            val sheetValue by remember { mutableStateOf(SheetValue.Hidden) }
             val sheetState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-                bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
+                bottomSheetState = rememberStandardBottomSheetState(initialValue = sheetValue, skipHiddenState = false)
             )
+            var init by remember { mutableStateOf(true) }
             var reviewId: Int? by remember { mutableStateOf(329) }
 
             LaunchedEffect(key1 = sheetState.bottomSheetState) {
@@ -67,6 +69,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+
 
             TorangTheme {
                 // A surface container using the 'background' color from the theme
@@ -79,13 +82,15 @@ class MainActivity : ComponentActivity() {
                             reviewId = reviewId,
                             sheetState = sheetState,
                             onDismissRequest = {},
-                            onBackPressed = {}
+                            onBackPressed = {},
+                            init = init
                         ) {
                             Column {
                                 Button(onClick = {
                                     coroutine.launch {
                                         Log.d("__sryang", "reviewId set 329")
                                         reviewId = 329
+                                        init = false
                                         sheetState.bottomSheetState.expand()
                                     }
                                 }) {
@@ -97,7 +102,7 @@ class MainActivity : ComponentActivity() {
                                 }
                                 LoginRepositoryTest(loginRepository = loginRepository)
                             }
-                            if (sheetState.bottomSheetState.currentValue != SheetValue.Hidden)
+                            if (init == false && sheetState.bottomSheetState.currentValue != SheetValue.Hidden)
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
