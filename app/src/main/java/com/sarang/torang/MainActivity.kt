@@ -56,7 +56,10 @@ class MainActivity : ComponentActivity() {
             val coroutine = rememberCoroutineScope()
             val sheetValue by remember { mutableStateOf(SheetValue.Hidden) }
             val sheetState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-                bottomSheetState = rememberStandardBottomSheetState(initialValue = sheetValue, skipHiddenState = false)
+                bottomSheetState = rememberStandardBottomSheetState(
+                    initialValue = sheetValue,
+                    skipHiddenState = false
+                )
             )
             var init by remember { mutableStateOf(true) }
             var reviewId: Int? by remember { mutableStateOf(329) }
@@ -77,40 +80,42 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
+                    Column {
+                        Button(onClick = {
+                            coroutine.launch {
+                                reviewId = 329
+                                init = false
+                                sheetState.bottomSheetState.expand()
+                            }
+                        }) {
+                            Text(text = "showComment")
+                        }
+
+                        Button(onClick = { showCommentDialog = true }) {
+                            Text(text = "showCommentDialog")
+                        }
+                        LoginRepositoryTest(loginRepository = loginRepository)
+                    }
+                    if (init == false && sheetState.bottomSheetState.currentValue != SheetValue.Hidden)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color(0x55000000))
+                        ) {
+                            Text(text = "!!")
+                        }
+
                     Box(modifier = Modifier) {
                         CommentBottomSheet(
                             reviewId = reviewId,
                             sheetState = sheetState,
                             onDismissRequest = {},
                             onBackPressed = {},
-                            init = init
-                        ) {
-                            Column {
-                                Button(onClick = {
-                                    coroutine.launch {
-                                        Log.d("__sryang", "reviewId set 329")
-                                        reviewId = 329
-                                        init = false
-                                        sheetState.bottomSheetState.expand()
-                                    }
-                                }) {
-                                    Text(text = "showComment")
-                                }
-
-                                Button(onClick = { showCommentDialog = true }) {
-                                    Text(text = "showCommentDialog")
-                                }
-                                LoginRepositoryTest(loginRepository = loginRepository)
-                            }
-                            if (init == false && sheetState.bottomSheetState.currentValue != SheetValue.Hidden)
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(Color(0x55000000))
-                                ) {
-                                    Text(text = "!!")
-                                }
-                        }
+                            init = init,
+                            onHidden = { init = true },
+                            content = {}
+                        )
 
                         if (showCommentDialog) {
                             CommentsModal(

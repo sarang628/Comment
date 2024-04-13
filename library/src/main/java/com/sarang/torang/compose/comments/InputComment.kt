@@ -1,6 +1,7 @@
 package com.sarang.torang.compose.comments
 
 import TorangAsyncImage
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -37,14 +38,19 @@ fun InputComment(
     input: String,
     onValueChange: (String) -> Unit,
     replyName: String? = null,
-    isUploading: Boolean = false
+    isUploading: Boolean = false,
+    show: Boolean = false
 ) {
     val focusRequester = remember { FocusRequester() }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(show) {
         // 다이얼로그 올라오는 도중에 키보드가 올라오면
         // 다이얼로그 애니메이션이 잠시 멈춰 딜레이 추가
-        delay(200)
-        focusRequester.requestFocus()
+        Log.d("__sryang", "show = ${show}")
+        if (show) {
+            Log.d("__sryang", "requestFocus")
+            delay(200)
+            focusRequester.requestFocus()
+        }
     }
     Row(
         modifier

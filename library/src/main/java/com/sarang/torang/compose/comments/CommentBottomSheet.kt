@@ -56,7 +56,8 @@ fun CommentBottomSheet(
         bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
     ),
     onBackPressed: () -> Unit,
-    init : Boolean = false,
+    init: Boolean = false,
+    onHidden: (() -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -103,7 +104,8 @@ fun CommentBottomSheet(
                 uiState = uiState,
                 sendComment = { viewModel.sendComment() },
                 onCommentChange = { viewModel.onCommentChange(it) },
-                onClearReply = { viewModel.onClearReply() }
+                onClearReply = { viewModel.onClearReply() },
+                show = !init
             )
         },
         sheetPeekHeight = 400.dp,
@@ -124,7 +126,8 @@ fun CommentBottomSheet(
                     onViewMore = { viewModel.onViewMore(it) })
             }
         },
-        content = content
+        content = content,
+        onHidden = onHidden
     )
 }
 
@@ -240,7 +243,8 @@ fun InputCommentForSticky(
     uiState: CommentsUiState,
     sendComment: () -> Unit,
     onCommentChange: (String) -> Unit,
-    onClearReply: (() -> Unit)?
+    onClearReply: (() -> Unit)?,
+    show: Boolean = false
 ) {
     Column {
         if (uiState.reply != null)
@@ -265,7 +269,8 @@ fun InputCommentForSticky(
                 input = uiState.comment,
                 onValueChange = { onCommentChange(it) },
                 replyName = uiState.reply?.name,
-                isUploading = uiState.isUploading
+                isUploading = uiState.isUploading,
+                show = show
             )
     }
 }
