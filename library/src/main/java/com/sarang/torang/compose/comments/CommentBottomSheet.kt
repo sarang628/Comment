@@ -61,6 +61,7 @@ fun CommentBottomSheet(
     content: @Composable (PaddingValues) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val replySingleEvent by viewModel.replySingleEvent.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutine = rememberCoroutineScope()
 
@@ -105,7 +106,7 @@ fun CommentBottomSheet(
                 sendComment = { viewModel.sendComment() },
                 onCommentChange = { viewModel.onCommentChange(it) },
                 onClearReply = { viewModel.onClearReply() },
-                show = !init
+                requestFocus = !init || replySingleEvent != null
             )
         },
         sheetPeekHeight = 400.dp,
@@ -167,7 +168,7 @@ fun CommentBottomSheetBody(
             text = "Comments",
             fontWeight = FontWeight.Bold
         )
-        CommentHelp(Modifier.layoutId("commentHelp"))
+        //CommentHelp(Modifier.layoutId("commentHelp"))
 
         if (uiState.list.isEmpty()) {
             EmptyComment(Modifier.layoutId("itemCommentList"))
@@ -244,7 +245,7 @@ fun InputCommentForSticky(
     sendComment: () -> Unit,
     onCommentChange: (String) -> Unit,
     onClearReply: (() -> Unit)?,
-    show: Boolean = false
+    requestFocus: Boolean = false
 ) {
     Column {
         if (uiState.reply != null)
@@ -270,7 +271,7 @@ fun InputCommentForSticky(
                 onValueChange = { onCommentChange(it) },
                 replyName = uiState.reply?.name,
                 isUploading = uiState.isUploading,
-                show = show
+                requestFocus = requestFocus
             )
     }
 }

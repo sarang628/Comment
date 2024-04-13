@@ -30,3 +30,6 @@ CommentBottomSheet(
 //contents
 }
 ```
+
+## 댓글을 달려고 하는 코멘트 reply 클릭 시 Input에 focus 시키고 그 위로 코멘트 위치 시키기
+### reply 클릭 시 Input에 focus 시키기

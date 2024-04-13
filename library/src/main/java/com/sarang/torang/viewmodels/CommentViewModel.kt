@@ -38,6 +38,10 @@ class CommentViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CommentsUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _replySingleEvent: MutableStateFlow<Comment?> = MutableStateFlow(null)
+    val replySingleEvent = _replySingleEvent.asStateFlow()
+
     private val jobs: HashMap<Long, Boolean> = HashMap()
 
     init {
@@ -218,6 +222,7 @@ class CommentViewModel @Inject constructor(
 
     fun onReply(comment: Comment) {
         _uiState.update { it.copy(reply = comment) }
+        _replySingleEvent.update { comment }
     }
 
     fun onClearReply() {
@@ -236,5 +241,8 @@ class CommentViewModel @Inject constructor(
             loadMoreUseCase.invoke(lastId.toInt())
         }
 
+    }
+
+    fun onRequestFocus() {
     }
 }
