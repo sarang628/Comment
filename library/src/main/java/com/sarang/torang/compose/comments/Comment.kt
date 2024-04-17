@@ -25,8 +25,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -196,40 +198,50 @@ fun SwipeToDismissComment(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var confirm by remember { mutableStateOf(false) }
-    val state =
-        rememberDismissState(positionalThreshold = { f -> 500f }, confirmValueChange = { value ->
-            if (value == DismissValue.DismissedToStart) {
+    val state = rememberSwipeToDismissBoxState(
+        positionalThreshold = { f -> 500f },
+        confirmValueChange = { value ->
+            if (value == SwipeToDismissBoxValue.EndToStart) {
                 Log.d("ItemCommentList", value.toString())
                 confirm = true
-                onDelete.invoke(comment.commentsId)
+                //onDelete.invoke(comment.commentsId)
             }
             true
-        })
-    SwipeToDismiss(state = state, background = {
-        val color by animateColorAsState(
-            when (state.targetValue) {
-                DismissValue.Default -> Color.Transparent
-                DismissValue.DismissedToStart -> MaterialTheme.colorScheme.secondary
-                else -> Color.Transparent
-            }, label = ""
-        )
-        Undo(
-            color = color,
-            onUndo = {
-                onUndo.invoke(comment.commentsId)
-                coroutineScope.launch {
-                    state.reset()
-                }
-            },
-            confirm = confirm,
-            showIcon = state.targetValue == DismissValue.DismissedToStart
-        )
-    }, dismissContent = {
-        Comment(comment = comment,
-            onFavorite = { onFavorite?.invoke(comment.commentsId) },
-            onReply = { onReply?.invoke(comment) },
-            onViewMore = onViewMore)
-    }, directions = if (comment.userId == myId) setOf(DismissDirection.EndToStart) else setOf()
+        }
+    )
+    SwipeToDismissBox(
+        state = state,
+        enableDismissFromStartToEnd = false,
+        enableDismissFromEndToStart = comment.userId == myId,
+        backgroundContent = {
+            val color by animateColorAsState(
+                when (state.targetValue) {
+                    SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.secondary
+                    SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.secondary
+                    SwipeToDismissBoxValue.Settled -> Color.Transparent
+                }, label = ""
+            )
+            Undo(
+                color = color,
+                onUndo = {
+                    onUndo.invoke(comment.commentsId)
+                    coroutineScope.launch {
+                        state.reset()
+                    }
+                },
+                confirm = confirm,
+                showIcon = state.targetValue == SwipeToDismissBoxValue.EndToStart
+            )
+        },
+        content = {
+            Comment(
+                comment = comment,
+                onFavorite = { onFavorite?.invoke(comment.commentsId) },
+                onReply = { onReply?.invoke(comment) },
+                onViewMore = onViewMore
+            )
+        },
+        //directions = if (comment.userId == myId) setOf(DismissDirection.EndToStart) else setOf()
     )
 }
 

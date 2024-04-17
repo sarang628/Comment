@@ -23,5 +23,5 @@ ext {
     themeVersion = '28a1702347'
     torangRepositoryVersion = 'e08e769c25'
     torangBottomSheetVersion = 'f77ebf4913'
-    commonImageLoaderVersion = 'eec41c7609'
+    commonImageLoaderVersion = '9ec5b04dfa'
 }
