@@ -204,7 +204,7 @@ fun SwipeToDismissComment(
             if (value == SwipeToDismissBoxValue.EndToStart) {
                 Log.d("ItemCommentList", value.toString())
                 confirm = true
-                //onDelete.invoke(comment.commentsId)
+                onDelete.invoke(comment.commentsId)
             }
             true
         }
