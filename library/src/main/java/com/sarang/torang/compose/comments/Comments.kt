@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun Comments(
+fun Comments(
     modifier: Modifier = Modifier,
     list: List<Comment>,
     movePosition: Int? = null,

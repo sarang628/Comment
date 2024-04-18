@@ -114,7 +114,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
 
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
     implementation project(path: ':library')
     implementation "com.github.sarang628:Theme:$themeVersion"
     implementation "com.github.sarang628:TorangRepository:$torangRepositoryVersion"
+    implementation "com.github.sarang628:TorangBottomSheet:$torangBottomSheetVersion"
 }
