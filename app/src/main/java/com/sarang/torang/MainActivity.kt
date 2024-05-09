@@ -24,6 +24,7 @@ import com.google.samples.apps.sunflower.ui.TorangTheme
 import com.sarang.torang.compose.comments.CommentsModal
 import com.sarang.torang.compose.comments.PreviewComments
 import com.sarang.torang.di.comment_di.CommentBottomSheet
+import com.sarang.torang.di.image.provideTorangAsyncImage
 import com.sarang.torang.repository.LoginRepository
 import com.sarang.torang.repository.LoginRepositoryTest
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,19 +73,20 @@ class MainActivity : ComponentActivity() {
                     CommentBottomSheet(
                         reviewId = reviewId,
                         onDismissRequest = {},
-                        onBackPressed = {},
                         show = show,
                         onHidden = {
                             show = false
                             reviewId = null
                         },
-                        content = {}
+                        content = {},
+                        image = provideTorangAsyncImage()
                     )
 
                     if (showCommentDialog) {
                         CommentsModal(
                             reviewId = reviewId,
                             onDismissRequest = { showCommentDialog = false },
+                            image = provideTorangAsyncImage()
                         )
                     }
                 }

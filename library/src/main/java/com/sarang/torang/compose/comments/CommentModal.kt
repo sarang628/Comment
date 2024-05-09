@@ -21,9 +21,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
@@ -46,7 +48,8 @@ import com.sarang.torang.viewmodels.CommentViewModel
 fun CommentsModal(
     viewModel: CommentViewModel = hiltViewModel(),
     reviewId: Int?,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
@@ -86,7 +89,8 @@ fun CommentsModal(
                     onReply = { viewModel.onReply(it) },
                     onClearReply = { viewModel.onClearReply() },
                     onViewMore = { viewModel.onViewMore(it) },
-                    onRequestFocus = { viewModel.onRequestFocus() })
+                    onRequestFocus = { viewModel.onRequestFocus() },
+                    image = image)
             }
         }
     }
@@ -105,7 +109,8 @@ fun CommentModalBody(
     onReply: ((Comment) -> Unit)? = null,
     onClearReply: (() -> Unit)? = null,
     onViewMore: ((Long) -> Unit)? = null,
-    onRequestFocus: (() -> Unit)? = null
+    onRequestFocus: (() -> Unit)? = null,
+    image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit,
 ) {
     ConstraintLayout(
         modifier = modifier
@@ -135,12 +140,18 @@ fun CommentModalBody(
                 onFavorite = onFavorite,
                 onReply = onReply,
                 myId = uiState.writer?.userId,
-                onViewMore = onViewMore
+                onViewMore = onViewMore,
+                image = image
             )
         }
 
         if (uiState.reply != null)
-            ReplyComment(profileImageUrl = uiState.reply.profileImageUrl, uiState.reply.name, onClearReply)
+            ReplyComment(
+                profileImageUrl = uiState.reply.profileImageUrl,
+                uiState.reply.name,
+                onClearReply,
+                image = image
+            )
 
         if (uiState.isLogin)
             HorizontalDivider(
@@ -158,10 +169,12 @@ fun CommentModalBody(
                 onValueChange = { onCommentChange(it) },
                 replyName = uiState.reply?.name,
                 isUploading = uiState.isUploading,
-                onRequestFocus = onRequestFocus
+                onRequestFocus = onRequestFocus,
+                image = image
             )
     }
 }
+
 fun commentsConstraintSet(): ConstraintSet {
     return ConstraintSet {
         val title = createRefFor("title")
@@ -218,6 +231,7 @@ fun PreviewCommentModalBody() {
         onDelete = {},
         onUndo = {},
         sendComment = {},
+        image = { _, _, _, _, _ -> },
         uiState = CommentsUiState().copy(
             list = arrayListOf(
                 testComment(0),

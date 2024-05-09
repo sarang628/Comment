@@ -120,4 +120,5 @@ dependencies {
     implementation "com.github.sarang628:Theme:$themeVersion"
     implementation "com.github.sarang628:TorangRepository:$torangRepositoryVersion"
     implementation "com.github.sarang628:TorangBottomSheet:$torangBottomSheetVersion"
+    implementation "com.github.sarang628:CommonImageLoader:$commonImageLoaderVersion"
 }

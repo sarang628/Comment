@@ -1,6 +1,5 @@
 package com.sarang.torang.compose.comments
 
-import TorangAsyncImage
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,7 +24,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
@@ -40,7 +41,8 @@ fun InputComment(
     replyName: String? = null,
     isUploading: Boolean = false,
     requestFocus: Boolean = false,
-    onRequestFocus: (() -> Unit)? = null
+    onRequestFocus: (() -> Unit)? = null,
+    image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(requestFocus) {
@@ -59,13 +61,13 @@ fun InputComment(
             .background(MaterialTheme.colorScheme.onSecondary)
             .padding(top = 7.dp), verticalAlignment = Alignment.CenterVertically
     ) {
-        TorangAsyncImage(
-            model = profileImageUrl,
-            errorIconSize = 20.dp,
-            progressSize = 20.dp,
-            modifier = Modifier
+        image.invoke(
+            Modifier
                 .size(40.dp)
-                .clip(CircleShape)
+                .clip(CircleShape),
+            profileImageUrl,
+            20.dp, 20.dp,
+            ContentScale.Crop
         )
         Spacer(modifier = Modifier.width(8.dp))
         BasicTextField(
@@ -111,6 +113,7 @@ fun PreviewInputComment() {
         }, name = "name",
         input = "",
         onValueChange = {},
-        isUploading = true
+        isUploading = true,
+        image = { _, _, _, _, _ -> }
     )
 }

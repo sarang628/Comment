@@ -1,6 +1,5 @@
 package com.sarang.torang.compose.comments
 
-import TorangAsyncImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -21,11 +20,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ReplyComment(profileImageUrl: String, name: String, onClearReply: (() -> Unit)?) {
+fun ReplyComment(
+    profileImageUrl: String, name: String, onClearReply: (() -> Unit)?,
+    image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit
+) {
     Row(
         Modifier
             .layoutId("reply")
@@ -35,13 +39,14 @@ fun ReplyComment(profileImageUrl: String, name: String, onClearReply: (() -> Uni
             .padding(start = 8.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TorangAsyncImage(
-            model = profileImageUrl,
-            modifier = Modifier
+        image(
+            Modifier
                 .size(30.dp)
                 .clip(CircleShape),
-            progressSize = 20.dp,
-            errorIconSize = 20.dp
+            profileImageUrl,
+            20.dp,
+            20.dp,
+            ContentScale.Crop
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = "Replying to ${name}", color = Color.Gray)

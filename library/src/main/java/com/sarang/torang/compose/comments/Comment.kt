@@ -1,6 +1,5 @@
 package com.sarang.torang.compose.comments
 
-import TorangAsyncImage
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -39,10 +38,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -61,7 +62,8 @@ fun Comment(
     comment: Comment,
     onFavorite: (() -> Unit)? = null,
     onReply: (() -> Unit)? = null,
-    onViewMore: (() -> Unit)? = null
+    onViewMore: (() -> Unit)? = null,
+    image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit,
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -77,14 +79,15 @@ fun Comment(
             ),
         constraintSet = itemCommentConstraintSet(isSubComment = comment.isSubComment)
     ) {
-        TorangAsyncImage(
-            model = comment.profileImageUrl,
-            errorIconSize = 20.dp,
-            progressSize = 20.dp,
-            modifier = Modifier
+        image.invoke(
+            Modifier
                 .layoutId("profileImage")
                 .size(if (comment.isSubComment) 30.dp else 40.dp)
                 .clip(CircleShape),
+            comment.profileImageUrl,
+            20.dp,
+            20.dp,
+            ContentScale.Crop
         )
 
         Text(text = comment.name, Modifier.layoutId("name"), fontSize = 13.sp)
@@ -194,7 +197,8 @@ fun SwipeToDismissComment(
     onFavorite: ((Long) -> Unit)? = null,
     onReply: ((Comment) -> Unit)? = null,
     myId: Int?,
-    onViewMore: (() -> Unit)? = null
+    onViewMore: (() -> Unit)? = null,
+    image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     var confirm by remember { mutableStateOf(false) }
@@ -238,7 +242,8 @@ fun SwipeToDismissComment(
                 comment = comment,
                 onFavorite = { onFavorite?.invoke(comment.commentsId) },
                 onReply = { onReply?.invoke(comment) },
-                onViewMore = onViewMore
+                onViewMore = onViewMore,
+                image = image
             )
         },
         //directions = if (comment.userId == myId) setOf(DismissDirection.EndToStart) else setOf()
@@ -343,7 +348,8 @@ fun PreviewSwipeToDismissComment() {
         comment = testComment().copy(isUploading = true),
         onDelete = {},
         onUndo = {},
-        myId = 0
+        myId = 0,
+        image = { _, _, _, _, _ -> }
     )
 }
 
@@ -351,7 +357,8 @@ fun PreviewSwipeToDismissComment() {
 @Composable
 fun PreviewComment() {
     Comment(/*Preview*/
-        comment = testComment()
+        comment = testComment(),
+        image = { _, _, _, _, _ -> }
     )
 }
 
@@ -359,6 +366,7 @@ fun PreviewComment() {
 @Composable
 fun PreviewSubComment() {
     Comment(/*Preview*/
-        comment = testSubComment()
+        comment = testSubComment(),
+        image = { _, _, _, _, _ -> }
     )
 }

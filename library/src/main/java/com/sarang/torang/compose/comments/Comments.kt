@@ -12,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.testComment
@@ -33,7 +35,8 @@ fun Comments(
     onFavorite: ((Long) -> Unit)? = null,
     onReply: ((Comment) -> Unit)? = null,
     myId: Int?,
-    onViewMore: ((Long) -> Unit)? = null
+    onViewMore: ((Long) -> Unit)? = null,
+    image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit,
 ) {
     val listState = rememberLazyListState()
 
@@ -67,7 +70,8 @@ fun Comments(
                         myId = myId,
                         onFavorite = onFavorite,
                         onReply = onReply,
-                        onViewMore = { onViewMore?.invoke(comment.commentsId) }
+                        onViewMore = { onViewMore?.invoke(comment.commentsId) },
+                        image = image
                     )
                 }
             }
@@ -93,6 +97,7 @@ fun PreviewComments() {
             testComment(7),
             testComment(8),
         ),
-        movePosition = null, onPosition = {}, onDelete = {}, onUndo = {}, myId = 0
+        movePosition = null, onPosition = {}, onDelete = {}, onUndo = {}, myId = 0,
+        image = { _, _, _, _, _ -> }
     )
 }
