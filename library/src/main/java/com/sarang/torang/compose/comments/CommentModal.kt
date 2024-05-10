@@ -160,7 +160,7 @@ fun CommentModalBody(
             )
 
         if (uiState.isLogin)
-            InputComment(
+            CommentTextField(
                 modifier = Modifier.layoutId("inputComment"),
                 profileImageUrl = uiState.writer?.profileUrl ?: "",
                 onSend = { sendComment() },
