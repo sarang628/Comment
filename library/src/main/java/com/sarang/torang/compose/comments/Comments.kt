@@ -32,10 +32,12 @@ fun Comments(
     onPosition: () -> Unit,
     onDelete: (Long) -> Unit,
     onUndo: (Long) -> Unit,
-    onFavorite: ((Long) -> Unit)? = null,
-    onReply: ((Comment) -> Unit)? = null,
+    onFavorite: (Long) -> Unit,
+    onReply: (Comment) -> Unit,
     myId: Int?,
-    onViewMore: ((Long) -> Unit)? = null,
+    onViewMore: (Long) -> Unit,
+    onName: (Int) -> Unit,
+    onImage: (Int) -> Unit,
     image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit,
 ) {
     val listState = rememberLazyListState()
@@ -70,8 +72,10 @@ fun Comments(
                         myId = myId,
                         onFavorite = onFavorite,
                         onReply = onReply,
-                        onViewMore = { onViewMore?.invoke(comment.commentsId) },
-                        image = image
+                        onViewMore = { onViewMore.invoke(comment.commentsId) },
+                        image = image,
+                        onName = { onName.invoke(comment.userId) },
+                        onImage = { onImage.invoke(comment.userId) }
                     )
                 }
             }
@@ -98,6 +102,11 @@ fun PreviewComments() {
             testComment(8),
         ),
         movePosition = null, onPosition = {}, onDelete = {}, onUndo = {}, myId = 0,
-        image = { _, _, _, _, _ -> }
+        image = { _, _, _, _, _ -> },
+        onFavorite = {},
+        onReply = {},
+        onViewMore = {},
+        onName = {},
+        onImage = {}
     )
 }

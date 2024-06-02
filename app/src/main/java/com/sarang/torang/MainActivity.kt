@@ -79,14 +79,18 @@ class MainActivity : ComponentActivity() {
                             reviewId = null
                         },
                         content = {},
-                        image = provideTorangAsyncImage()
+                        image = provideTorangAsyncImage(),
+                        onImage = {},
+                        onName = {}
                     )
 
                     if (showCommentDialog) {
                         CommentsModal(
                             reviewId = reviewId,
                             onDismissRequest = { showCommentDialog = false },
-                            image = provideTorangAsyncImage()
+                            image = provideTorangAsyncImage(),
+                            onImage = {},
+                            onName = {}
                         )
                     }
                 }

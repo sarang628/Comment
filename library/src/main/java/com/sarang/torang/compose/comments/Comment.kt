@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,15 +16,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
@@ -64,9 +60,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun Comment(
     comment: Comment,
-    onFavorite: (() -> Unit)? = null,
-    onReply: (() -> Unit)? = null,
-    onViewMore: (() -> Unit)? = null,
+    onFavorite: () -> Unit,
+    onReply: () -> Unit,
+    onViewMore: () -> Unit,
+    onName: () -> Unit,
+    onImage: () -> Unit,
     image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit,
 ) {
     ConstraintLayout(
@@ -87,29 +85,43 @@ fun Comment(
             Modifier
                 .layoutId("profileImage")
                 .size(if (comment.isSubComment) 30.dp else 40.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .clickable { onImage.invoke() },
             comment.profileImageUrl,
             20.dp,
             20.dp,
             ContentScale.Crop
         )
 
-        Text(text = comment.name, Modifier.layoutId("name"), fontSize = 13.sp, style = LocalTextStyle.current.merge(
-            TextStyle.Default.merge(
-                lineHeightStyle = LineHeightStyle(
-                    alignment = LineHeightStyle.Alignment.Center,
-                    trim = LineHeightStyle.Trim.Both
+        Text(
+            text = comment.name,
+            Modifier
+                .layoutId("name")
+                .clickable { onName.invoke() },
+            fontSize = 13.sp,
+            style = LocalTextStyle.current.merge(
+                TextStyle.Default.merge(
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.Both
+                    )
                 )
             )
-        ))
-        Text(text = comment.date, Modifier.layoutId("date"), color = Color.Gray, fontSize = 13.sp, style = LocalTextStyle.current.merge(
-            TextStyle.Default.merge(
-                lineHeightStyle = LineHeightStyle(
-                    alignment = LineHeightStyle.Alignment.Center,
-                    trim = LineHeightStyle.Trim.Both
+        )
+        Text(
+            text = comment.date,
+            Modifier.layoutId("date"),
+            color = Color.Gray,
+            fontSize = 13.sp,
+            style = LocalTextStyle.current.merge(
+                TextStyle.Default.merge(
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.Both
+                    )
                 )
             )
-        ))
+        )
         Text(
             text = comment.transFormComment(MaterialTheme.colorScheme.primary),
             Modifier.layoutId("comment"),
@@ -120,12 +132,12 @@ fun Comment(
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .layoutId("replyAndPosting")
-                .clickable { onReply?.invoke() }, fontSize = 13.sp,
+                .clickable { onReply.invoke() }, fontSize = 13.sp,
             color = Color.Gray
         )
 
         IconButton(modifier = Modifier
-            .layoutId("favorite"), onClick = { onFavorite?.invoke() }) {
+            .layoutId("favorite"), onClick = { onFavorite.invoke() }) {
             Icon(
                 modifier = Modifier
                     .size(20.dp),
@@ -165,7 +177,7 @@ fun itemCommentConstraintSet(isSubComment: Boolean = false): ConstraintSet {
 
         constrain(name) {
             start.linkTo(profileImage.end, 8.dp)
-            top.linkTo(parent.top,)
+            top.linkTo(parent.top)
         }
 
         constrain(date) {
@@ -212,10 +224,12 @@ fun SwipeToDismissComment(
     comment: Comment,
     onDelete: (Long) -> Unit,
     onUndo: (Long) -> Unit,
-    onFavorite: ((Long) -> Unit)? = null,
-    onReply: ((Comment) -> Unit)? = null,
+    onFavorite: (Long) -> Unit,
+    onReply: (Comment) -> Unit,
     myId: Int?,
-    onViewMore: (() -> Unit)? = null,
+    onViewMore: () -> Unit,
+    onName: () -> Unit,
+    onImage: () -> Unit,
     image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -258,10 +272,12 @@ fun SwipeToDismissComment(
         content = {
             Comment(
                 comment = comment,
-                onFavorite = { onFavorite?.invoke(comment.commentsId) },
-                onReply = { onReply?.invoke(comment) },
+                onFavorite = { onFavorite.invoke(comment.commentsId) },
+                onReply = { onReply.invoke(comment) },
                 onViewMore = onViewMore,
-                image = image
+                image = image,
+                onName = onName,
+                onImage = onImage
             )
         },
         //directions = if (comment.userId == myId) setOf(DismissDirection.EndToStart) else setOf()
@@ -320,7 +336,7 @@ fun MoreReply(modifier: Modifier = Modifier, count: Int? = 0, onViewMore: (() ->
         HorizontalDivider(Modifier.width(50.dp))
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = "View ${count} more reply",
+            text = "View $count more reply",
             color = Color.Gray,
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp
@@ -367,7 +383,12 @@ fun PreviewSwipeToDismissComment() {
         onDelete = {},
         onUndo = {},
         myId = 0,
-        image = { _, _, _, _, _ -> }
+        image = { _, _, _, _, _ -> },
+        onFavorite = {},
+        onReply = {},
+        onViewMore = {},
+        onName = {},
+        onImage = {}
     )
 }
 
@@ -376,7 +397,12 @@ fun PreviewSwipeToDismissComment() {
 fun PreviewComment() {
     Comment(/*Preview*/
         comment = testComment(),
-        image = { _, _, _, _, _ -> }
+        image = { _, _, _, _, _ -> },
+        onName = {},
+        onReply = {},
+        onImage = {},
+        onFavorite = {},
+        onViewMore = {}
     )
 }
 
@@ -385,6 +411,11 @@ fun PreviewComment() {
 fun PreviewSubComment() {
     Comment(/*Preview*/
         comment = testSubComment(),
-        image = { _, _, _, _, _ -> }
+        image = { _, _, _, _, _ -> },
+        onName = {},
+        onReply = {},
+        onImage = {},
+        onFavorite = {},
+        onViewMore = {}
     )
 }

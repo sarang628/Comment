@@ -49,6 +49,8 @@ fun CommentsModal(
     viewModel: CommentViewModel = hiltViewModel(),
     reviewId: Int?,
     onDismissRequest: () -> Unit,
+    onName: (Int) -> Unit,
+    onImage: (Int) -> Unit,
     image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -90,7 +92,10 @@ fun CommentsModal(
                     onClearReply = { viewModel.onClearReply() },
                     onViewMore = { viewModel.onViewMore(it) },
                     onRequestFocus = { viewModel.onRequestFocus() },
-                    image = image)
+                    image = image,
+                    onName = onName,
+                    onImage = onImage
+                )
             }
         }
     }
@@ -105,11 +110,13 @@ fun CommentModalBody(
     onUndo: (Long) -> Unit,
     sendComment: () -> Unit,
     onCommentChange: (String) -> Unit,
-    onFavorite: ((Long) -> Unit)? = null,
-    onReply: ((Comment) -> Unit)? = null,
-    onClearReply: (() -> Unit)? = null,
-    onViewMore: ((Long) -> Unit)? = null,
-    onRequestFocus: (() -> Unit)? = null,
+    onFavorite: (Long) -> Unit,
+    onReply: (Comment) -> Unit,
+    onClearReply: () -> Unit,
+    onViewMore: (Long) -> Unit,
+    onRequestFocus: () -> Unit,
+    onName: (Int) -> Unit,
+    onImage: (Int) -> Unit,
     image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit,
 ) {
     ConstraintLayout(
@@ -141,7 +148,9 @@ fun CommentModalBody(
                 onReply = onReply,
                 myId = uiState.writer?.userId,
                 onViewMore = onViewMore,
-                image = image
+                image = image,
+                onName = onName,
+                onImage = onImage
             )
         }
 
@@ -248,7 +257,15 @@ fun PreviewCommentModalBody() {
                 testComment(8),
             ),
             writer = User("", 10, ""),
-            reply = testComment()
-        )
+            reply = testComment(),
+            movePosition = 0
+        ),
+        onReply = {},
+        onFavorite = {},
+        onViewMore = {},
+        onRequestFocus = {},
+        onClearReply = {},
+        onName = {},
+        onImage = {}
     )
 }
