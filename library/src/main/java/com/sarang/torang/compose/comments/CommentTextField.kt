@@ -42,6 +42,7 @@ fun CommentTextField(
     isUploading: Boolean = false,
     requestFocus: Boolean = false,
     onRequestFocus: (() -> Unit)? = null,
+    enabled: Boolean = true,
     image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -73,6 +74,7 @@ fun CommentTextField(
         BasicTextField(
             value = input,
             onValueChange = onValueChange,
+            enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
@@ -88,7 +90,7 @@ fun CommentTextField(
                 } else if (input.isEmpty()) {
                     Box {
                         Text(
-                            text = "Add a comment for $name",
+                            text = name,
                             color = Color.Gray
                         )
                         innerTextField()

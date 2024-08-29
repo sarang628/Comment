@@ -37,7 +37,6 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var loginRepository: LoginRepository
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

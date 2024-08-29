@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun Comments(
     modifier: Modifier = Modifier,
+    isLogin: Boolean,
     list: List<Comment>,
     movePosition: Int? = null,
     onPosition: () -> Unit,
@@ -75,7 +76,8 @@ fun Comments(
                         onViewMore = { onViewMore.invoke(comment.commentsId) },
                         image = image,
                         onName = { onName.invoke(comment.userId) },
-                        onImage = { onImage.invoke(comment.userId) }
+                        onImage = { onImage.invoke(comment.userId) },
+                        isLogin = isLogin
                     )
                 }
             }
@@ -107,6 +109,7 @@ fun PreviewComments() {
         onReply = {},
         onViewMore = {},
         onName = {},
-        onImage = {}
+        onImage = {},
+        isLogin = true
     )
 }

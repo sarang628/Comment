@@ -7,3 +7,6 @@
 [submodule "app/src/main/java/com/sarang/torang/di/repository"]
 	path = app/src/main/java/com/sarang/torang/di/repository
 	url = https://github.com/sarang628/repository
+[submodule "gradle/TorangToml"]
+	path = gradle/TorangToml
+	url = https://github.com/sarang628/TorangToml.git

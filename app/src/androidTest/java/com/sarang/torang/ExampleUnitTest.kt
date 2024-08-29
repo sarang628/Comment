@@ -2,6 +2,7 @@ package com.sarang.torang
 
 import android.util.Log
 import com.sarang.torang.data.comments.testComment
+import com.sarang.torang.uistate.Comments
 import com.sarang.torang.uistate.CommentsUiState
 import com.sarang.torang.uistate.findRootCommentId
 import org.junit.Assert.assertEquals
@@ -23,7 +24,7 @@ class ExampleUnitTest {
 
     @Test
     fun commentUiState() {
-        val commentUiState = CommentsUiState(
+        val commentUiState = Comments(
             list = listOf(
                 testComment().copy(commentsId = 1),
                 testComment().copy(commentsId = 7, parentCommentId = 1),

@@ -4,7 +4,14 @@ import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.User
 import com.sarang.torang.data.comments.isRoot
 
-data class CommentsUiState(
+sealed interface CommentsUiState {
+    object Loading : CommentsUiState
+    data class Success(val comments: Comments) : CommentsUiState
+    object Error : CommentsUiState
+}
+
+
+data class Comments(
     val reviewId: Int? = null,
     val list: List<Comment> = listOf(),
     val snackBarMessage: String? = null,
@@ -15,7 +22,7 @@ data class CommentsUiState(
     val uploadingComment: Comment? = null
 )
 
-fun CommentsUiState.findParentComment(comment: Comment): Comment {
+fun Comments.findParentComment(comment: Comment): Comment {
     var c: Comment = comment
     while (!c.isRoot) {
         val temp = list.find { it.commentsId == c.parentCommentId }
@@ -27,9 +34,9 @@ fun CommentsUiState.findParentComment(comment: Comment): Comment {
     return c
 }
 
-val CommentsUiState.isUploading: Boolean get() = uploadingComment != null
+val Comments.isUploading: Boolean get() = uploadingComment != null
 
-fun CommentsUiState.findRootCommentId(comment: Comment): Long {
+fun Comments.findRootCommentId(comment: Comment): Long {
     var c: Comment = comment
     while (!c.isRoot) {
         c = findParentComment(c)
@@ -37,7 +44,7 @@ fun CommentsUiState.findRootCommentId(comment: Comment): Long {
     return c.commentsId
 }
 
-val CommentsUiState.toComment: Comment
+val Comments.toComment: Comment
     get() {
         return Comment(
             userId = this.writer?.userId ?: 0,
@@ -51,4 +58,4 @@ val CommentsUiState.toComment: Comment
         )
     }
 
-val CommentsUiState.isLogin get() = writer?.userId != null
+val Comments.isLogin get() = writer?.userId != null

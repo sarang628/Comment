@@ -60,6 +60,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Comment(
     comment: Comment,
+    isLogin: Boolean,
     onFavorite: () -> Unit,
     onReply: () -> Unit,
     onViewMore: () -> Unit,
@@ -127,26 +128,30 @@ fun Comment(
             Modifier.layoutId("comment"),
             fontSize = 13.sp
         )
-        Text(
-            text = if (comment.isUploading) "Posting" else "Reply",
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .layoutId("replyAndPosting")
-                .clickable { onReply.invoke() }, fontSize = 13.sp,
-            color = Color.Gray
-        )
 
-        IconButton(modifier = Modifier
-            .layoutId("favorite"), onClick = { onFavorite.invoke() }) {
-            Icon(
+        if (isLogin)
+            Text(
+                text = if (comment.isUploading) "Posting" else "Reply",
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .size(20.dp),
-                imageVector = comment.favoriteIcon,
-                contentDescription = "",
+                    .layoutId("replyAndPosting")
+                    .clickable { onReply.invoke() }, fontSize = 13.sp,
+                color = Color.Gray
             )
-        }
 
-        Text(text = comment.commentLikeCount.toString(), Modifier.layoutId("likeCount"))
+        if (isLogin) {
+            IconButton(modifier = Modifier
+                .layoutId("favorite"), onClick = { onFavorite.invoke() }) {
+                Icon(
+                    modifier = Modifier
+                        .size(20.dp),
+                    imageVector = comment.favoriteIcon,
+                    contentDescription = "",
+                )
+            }
+
+            Text(text = comment.commentLikeCount.toString(), Modifier.layoutId("likeCount"))
+        }
 
         if (comment.subCommentCount != null && comment.subCommentCount > 0) {
             MoreReply(
@@ -222,6 +227,7 @@ fun itemCommentConstraintSet(isSubComment: Boolean = false): ConstraintSet {
 @Composable
 fun SwipeToDismissComment(
     comment: Comment,
+    isLogin: Boolean,
     onDelete: (Long) -> Unit,
     onUndo: (Long) -> Unit,
     onFavorite: (Long) -> Unit,
@@ -277,7 +283,8 @@ fun SwipeToDismissComment(
                 onViewMore = onViewMore,
                 image = image,
                 onName = onName,
-                onImage = onImage
+                onImage = onImage,
+                isLogin = isLogin
             )
         },
         //directions = if (comment.userId == myId) setOf(DismissDirection.EndToStart) else setOf()
@@ -388,7 +395,8 @@ fun PreviewSwipeToDismissComment() {
         onReply = {},
         onViewMore = {},
         onName = {},
-        onImage = {}
+        onImage = {},
+        isLogin = false
     )
 }
 
@@ -402,7 +410,8 @@ fun PreviewComment() {
         onReply = {},
         onImage = {},
         onFavorite = {},
-        onViewMore = {}
+        onViewMore = {},
+        isLogin = false
     )
 }
 
@@ -416,6 +425,7 @@ fun PreviewSubComment() {
         onReply = {},
         onImage = {},
         onFavorite = {},
-        onViewMore = {}
+        onViewMore = {},
+        isLogin = false
     )
 }

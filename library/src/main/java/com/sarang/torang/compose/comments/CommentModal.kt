@@ -16,9 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -35,10 +34,12 @@ import com.sarang.torang.data.comments.Comment
 import com.sarang.torang.data.comments.User
 import com.sarang.torang.data.comments.testComment
 import com.sarang.torang.data.comments.testSubComment
+import com.sarang.torang.uistate.Comments
 import com.sarang.torang.uistate.CommentsUiState
 import com.sarang.torang.uistate.isLogin
 import com.sarang.torang.uistate.isUploading
 import com.sarang.torang.viewmodels.CommentViewModel
+import kotlinx.coroutines.launch
 
 /**
  * @param reviewId sheet를 Hidden 시킬 때 reviewId를 null로 넘기면 화면이 초기화 됩니다.
@@ -53,58 +54,66 @@ fun CommentsModal(
     onImage: (Int) -> Unit,
     image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     val snackbarHostState = remember { SnackbarHostState() }
+    val coroutine = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = uiState.snackBarMessage, block = {
-        uiState.snackBarMessage?.let {
-            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
-            viewModel.clearErrorMessage()
-        }
-    })
+    when (uiState) {
+        is CommentsUiState.Success -> {
+            val data = uiState.comments
+            LaunchedEffect(key1 = data.snackBarMessage, block = {
+                data.snackBarMessage?.let {
+                    coroutine.launch {
+                        snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
+                    }
+                    viewModel.clearErrorMessage()
+                }
+            })
 
-    LaunchedEffect(key1 = reviewId, block = {
-        viewModel.loadComment(reviewId)
-    })
+            LaunchedEffect(key1 = reviewId, block = {
+                viewModel.loadComment(reviewId)
+            })
 
-    ModalBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = onDismissRequest
-    ) {
-        Column {
-            Text(text = "!!!!!")
-            Scaffold(
-                snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-                modifier = Modifier
-                    .fillMaxWidth(),
-            ) { padding ->
-                CommentModalBody(
-                    modifier = Modifier.padding(padding),
-                    uiState = uiState,
-                    onUndo = { viewModel.onUndo(it) },
-                    onDelete = { viewModel.onDelete(it) },
-                    onCommentChange = { viewModel.onCommentChange(it) },
-                    onScrollTop = { viewModel.onPosition() },
-                    sendComment = { viewModel.sendComment() },
-                    onFavorite = { viewModel.onFavorite(it) },
-                    onReply = { viewModel.onReply(it) },
-                    onClearReply = { viewModel.onClearReply() },
-                    onViewMore = { viewModel.onViewMore(it) },
-                    onRequestFocus = { viewModel.onRequestFocus() },
-                    image = image,
-                    onName = onName,
-                    onImage = onImage
-                )
+            ModalBottomSheet(
+                sheetState = sheetState, onDismissRequest = onDismissRequest
+            ) {
+                Column {
+                    Scaffold(
+                        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { padding ->
+                        CommentModalBody(
+                            modifier = Modifier.padding(padding),
+                            uiState = uiState.comments,
+                            onUndo = { viewModel.onUndo(it) },
+                            onDelete = { viewModel.onDelete(it) },
+                            onCommentChange = { viewModel.onCommentChange(it) },
+                            onScrollTop = { viewModel.onPosition() },
+                            sendComment = { viewModel.sendComment() },
+                            onFavorite = { viewModel.onFavorite(it) },
+                            onReply = { viewModel.onReply(it) },
+                            onClearReply = { viewModel.onClearReply() },
+                            onViewMore = { viewModel.onViewMore(it) },
+                            onRequestFocus = { viewModel.onRequestFocus() },
+                            image = image,
+                            onName = onName,
+                            onImage = onImage
+                        )
+                    }
+                }
             }
         }
+
+        CommentsUiState.Loading -> {}
+        CommentsUiState.Error -> {}
     }
 }
 
 @Composable
 fun CommentModalBody(
     modifier: Modifier = Modifier,
-    uiState: CommentsUiState,
+    uiState: Comments,
     onScrollTop: () -> Unit,
     onDelete: (Long) -> Unit,
     onUndo: (Long) -> Unit,
@@ -120,14 +129,10 @@ fun CommentModalBody(
     image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit,
 ) {
     ConstraintLayout(
-        modifier = modifier
-            .fillMaxSize(),
-        constraintSet = commentsConstraintSet()
+        modifier = modifier.fillMaxSize(), constraintSet = commentsConstraintSet()
     ) {
         Text(
-            modifier = Modifier.layoutId("title"),
-            text = "Comments",
-            fontWeight = FontWeight.Bold
+            modifier = Modifier.layoutId("title"), text = "Comments", fontWeight = FontWeight.Bold
         )
         CommentHelp(Modifier.layoutId("commentHelp"))
 
@@ -150,37 +155,37 @@ fun CommentModalBody(
                 onViewMore = onViewMore,
                 image = image,
                 onName = onName,
-                onImage = onImage
+                onImage = onImage,
+                isLogin = uiState.isLogin
             )
         }
 
-        if (uiState.reply != null)
-            ReplyComment(
-                profileImageUrl = uiState.reply.profileImageUrl,
-                uiState.reply.name,
-                onClearReply,
-                image = image
-            )
+        if (uiState.reply != null) ReplyComment(
+            profileImageUrl = uiState.reply.profileImageUrl,
+            uiState.reply.name,
+            onClearReply,
+            image = image
+        )
 
-        if (uiState.isLogin)
-            HorizontalDivider(
-                modifier = Modifier.layoutId("divide"),
-                color = Color.LightGray
-            )
 
-        if (uiState.isLogin)
-            CommentTextField(
-                modifier = Modifier.layoutId("inputComment"),
-                profileImageUrl = uiState.writer?.profileUrl ?: "",
-                onSend = { sendComment() },
-                name = uiState.writer?.userName ?: "",
-                input = uiState.comment,
-                onValueChange = { onCommentChange(it) },
-                replyName = uiState.reply?.name,
-                isUploading = uiState.isUploading,
-                onRequestFocus = onRequestFocus,
-                image = image
-            )
+        HorizontalDivider(
+            modifier = Modifier.layoutId("divide"), color = Color.LightGray
+        )
+
+
+        CommentTextField(
+            modifier = Modifier.layoutId("inputComment"),
+            profileImageUrl = uiState.writer?.profileUrl ?: "",
+            onSend = { sendComment() },
+            name = if (uiState.isLogin) "Add a comment for ${uiState.writer?.userName ?: ""}" else "로그인을 해주세요",
+            input = uiState.comment,
+            onValueChange = { onCommentChange(it) },
+            replyName = uiState.reply?.name,
+            isUploading = uiState.isUploading,
+            onRequestFocus = onRequestFocus,
+            image = image,
+            enabled = uiState.isLogin
+        )
     }
 }
 
@@ -241,7 +246,7 @@ fun PreviewCommentModalBody() {
         onUndo = {},
         sendComment = {},
         image = { _, _, _, _, _ -> },
-        uiState = CommentsUiState().copy(
+        uiState = Comments().copy(
             list = arrayListOf(
                 testComment(0),
                 testComment(1),
@@ -255,10 +260,7 @@ fun PreviewCommentModalBody() {
                 testComment(6),
                 testComment(7),
                 testComment(8),
-            ),
-            writer = User("", 10, ""),
-            reply = testComment(),
-            movePosition = 0
+            ), writer = User("", 10, ""), reply = testComment(), movePosition = 0
         ),
         onReply = {},
         onFavorite = {},
@@ -266,6 +268,5 @@ fun PreviewCommentModalBody() {
         onRequestFocus = {},
         onClearReply = {},
         onName = {},
-        onImage = {}
-    )
+        onImage = {})
 }

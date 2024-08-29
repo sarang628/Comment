@@ -9,18 +9,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import com.sarang.torang.compose.comments.CommentTextField
-import com.sarang.torang.compose.comments.ReplyComment
 import com.sarang.torang.data.comments.User
 import com.sarang.torang.data.comments.testComment
 import com.sarang.torang.data.comments.testSubComment
+import com.sarang.torang.uistate.Comments
 import com.sarang.torang.uistate.CommentsUiState
 import com.sarang.torang.uistate.isLogin
 import com.sarang.torang.uistate.isUploading
 
 @Composable
 fun InputComment(
-    uiState: CommentsUiState,
+    uiState: Comments,
     sendComment: () -> Unit,
     onCommentChange: (String) -> Unit,
     onClearReply: (() -> Unit)?,
@@ -30,31 +29,30 @@ fun InputComment(
     Column {
         if (uiState.reply != null)
             ReplyComment(
-                profileImageUrl = uiState.reply!!.profileImageUrl,
-                uiState.reply!!.name,
+                profileImageUrl = uiState.reply.profileImageUrl,
+                uiState.reply.name,
                 onClearReply,
                 image = image
             )
 
-        if (uiState.isLogin)
-            HorizontalDivider(
-                modifier = Modifier.layoutId("divide"),
-                color = Color.LightGray
-            )
+        HorizontalDivider(
+            modifier = Modifier.layoutId("divide"),
+            color = Color.LightGray
+        )
 
-        if (uiState.isLogin)
-            CommentTextField(
-                modifier = Modifier.layoutId("inputComment"),
-                profileImageUrl = uiState.writer?.profileUrl ?: "",
-                onSend = { sendComment() },
-                name = uiState.writer?.userName ?: "",
-                input = uiState.comment,
-                onValueChange = { onCommentChange(it) },
-                replyName = uiState.reply?.name,
-                isUploading = uiState.isUploading,
-                requestFocus = requestFocus,
-                image = image
-            )
+        CommentTextField(
+            modifier = Modifier.layoutId("inputComment"),
+            profileImageUrl = uiState.writer?.profileUrl ?: "",
+            onSend = { sendComment() },
+            name = if (uiState.isLogin) "Add a comment for ${uiState.writer?.userName ?: ""}" else "로그인을 해주세요",
+            input = uiState.comment,
+            onValueChange = { onCommentChange(it) },
+            replyName = uiState.reply?.name,
+            isUploading = uiState.isUploading,
+            requestFocus = requestFocus,
+            image = image,
+            enabled = uiState.isLogin
+        )
     }
 }
 
@@ -62,7 +60,7 @@ fun InputComment(
 @Composable
 fun PreviewInputComment() {
     InputComment(/*Preview*/
-        uiState = CommentsUiState().copy(
+        uiState = Comments().copy(
             list = arrayListOf(
                 testComment(0),
                 testComment(1),
