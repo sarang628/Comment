@@ -84,20 +84,19 @@ class CommentViewModel @Inject constructor(
                 loadCommentsUseCase.invoke(reviewId)
 
                 getCommentsUseCase.invoke(reviewId = reviewId).collectLatest { list ->
-                    Log.d(TAG, "CommentsUiState: Success: $list")
                     uiState = CommentsUiState.Success(Comments(list = list, reviewId = reviewId))
-                }
 
-                getUserUseCase.invoke().collectLatest { user ->
-                    if (user != null) {
-                        (uiState as CommentsUiState.Success).let {
-                            Log.d(TAG, "CommentsUiState: Success")
-                            uiState = it.copy(comments = it.comments.copy(writer = user))
-                        }
-                    } else {
-                        (uiState as CommentsUiState.Success).let {
-                            Log.d(TAG, "CommentsUiState: Success")
-                            uiState = it.copy(comments = it.comments.copy(writer = null))
+                    getUserUseCase.invoke().collectLatest { user ->
+                        if (user != null) {
+                            Log.d(TAG, "user is exist -> login state")
+                            (uiState as CommentsUiState.Success).let {
+                                uiState = it.copy(comments = it.comments.copy(writer = user))
+                            }
+                        } else {
+                            Log.d(TAG, "user is null -> logout state")
+                            (uiState as CommentsUiState.Success).let {
+                                uiState = it.copy(comments = it.comments.copy(writer = null))
+                            }
                         }
                     }
                 }

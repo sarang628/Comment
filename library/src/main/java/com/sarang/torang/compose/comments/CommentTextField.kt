@@ -50,7 +50,6 @@ fun CommentTextField(
         // 다이얼로그 올라오는 도중에 키보드가 올라오면
         // 다이얼로그 애니메이션이 잠시 멈춰 딜레이 추가
         if (requestFocus) {
-            Log.d("__sryang", "requestFocus")
             delay(200)
             focusRequester.requestFocus()
             onRequestFocus?.invoke()
