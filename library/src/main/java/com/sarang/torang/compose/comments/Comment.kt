@@ -319,7 +319,7 @@ fun Undo(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun MoreReply(modifier: Modifier = Modifier, count: Int? = 0, onViewMore: (() -> Unit)? = null) {
     Row(
@@ -342,7 +342,7 @@ fun MoreReply(modifier: Modifier = Modifier, count: Int? = 0, onViewMore: (() ->
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun HideReply(modifier: Modifier = Modifier) {
     Row(
@@ -362,7 +362,7 @@ fun HideReply(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewUndo() {
     Undo(
@@ -373,7 +373,7 @@ fun PreviewUndo() {
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewSwipeToDismissComment() {
     SwipeToDismissComment(/*Preview*/
@@ -391,7 +391,7 @@ fun PreviewSwipeToDismissComment() {
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewComment() {
     Comment(/*Preview*/
@@ -406,7 +406,7 @@ fun PreviewComment() {
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewSubComment() {
     Comment(/*Preview*/

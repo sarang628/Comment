@@ -72,12 +72,13 @@ class CommentViewModel @Inject constructor(
     private var job: Job? = null
 
     fun loadComment(reviewId: Int?) {
-        uiState = CommentsUiState.Loading
-        Log.d(TAG, "loadComment: $reviewId")
         if (reviewId == null) {
+            Log.d(TAG, "reviewId is null. clear viewModel.")
             onClear()
             return
         }
+
+        uiState = CommentsUiState.Loading
 
         job = viewModelScope.launch {
             try {
@@ -88,12 +89,10 @@ class CommentViewModel @Inject constructor(
 
                     getUserUseCase.invoke().collectLatest { user ->
                         if (user != null) {
-                            Log.d(TAG, "user is exist -> login state")
                             (uiState as CommentsUiState.Success).let {
                                 uiState = it.copy(comments = it.comments.copy(writer = user))
                             }
                         } else {
-                            Log.d(TAG, "user is null -> logout state")
                             (uiState as CommentsUiState.Success).let {
                                 uiState = it.copy(comments = it.comments.copy(writer = null))
                             }
@@ -101,7 +100,7 @@ class CommentViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "error loadComment : {$e} ")
+                Log.e(TAG, "error loadComment : {${e.message}} ")
                 uiState = CommentsUiState.Success(Comments(snackBarMessage = e.message))
             }
         }
@@ -112,7 +111,8 @@ class CommentViewModel @Inject constructor(
             if (it.comments.reply == null) {
                 viewModelScope.launch {
                     try {
-                        sendCommentUseCase.invoke(reviewId = it.comments.reviewId!!,
+                        sendCommentUseCase.invoke(
+                            reviewId = it.comments.reviewId!!,
                             comment = it.comments.comment,
                             onLocalUpdated = {
                                 uiState = it.copy(
@@ -133,7 +133,8 @@ class CommentViewModel @Inject constructor(
                     try {
                         val uploadComment =
                             it.comments.reply ?: throw Exception("전송할 코멘트 정보가 없습니다.")
-                        sendReplyUseCase.invoke(reviewId = it.comments.reviewId!!,
+                        sendReplyUseCase.invoke(
+                            reviewId = it.comments.reviewId!!,
                             parentCommentId = it.comments.findRootCommentId(uploadComment),
                             comment = it.comments.comment,
                             onLocalUpdated = {})
@@ -291,7 +292,6 @@ class CommentViewModel @Inject constructor(
     }
 
     fun onHidden() {
-        Log.d(TAG, "onHidden")
         if (job != null && job!!.isActive)
             job!!.cancel()
     }

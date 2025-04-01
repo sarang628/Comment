@@ -2,13 +2,11 @@ package com.sarang.torang
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,9 +38,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            var showCommentDialog by remember { mutableStateOf(false) }
             val coroutine = rememberCoroutineScope()
-            var show by remember { mutableStateOf(false) }
+            var showCommentDialog by remember { mutableStateOf(false) }
+            var showComment by remember { mutableStateOf(false) }
             var reviewId: Int? by remember { mutableStateOf(329) }
 
 
@@ -56,7 +54,7 @@ class MainActivity : ComponentActivity() {
                         Button(onClick = {
                             coroutine.launch {
                                 reviewId = 329
-                                show = true
+                                showComment = true
                             }
                         }) {
                             Text(text = "showComment")
@@ -72,9 +70,9 @@ class MainActivity : ComponentActivity() {
                     CommentBottomSheet(
                         reviewId = reviewId,
                         onDismissRequest = {},
-                        show = show,
+                        show = showComment,
                         onHidden = {
-                            show = false
+                            showComment = false
                             reviewId = null
                         },
                         content = {},

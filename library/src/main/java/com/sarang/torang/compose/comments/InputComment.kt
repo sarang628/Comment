@@ -13,13 +13,12 @@ import com.sarang.torang.data.comments.User
 import com.sarang.torang.data.comments.testComment
 import com.sarang.torang.data.comments.testSubComment
 import com.sarang.torang.uistate.Comments
-import com.sarang.torang.uistate.CommentsUiState
 import com.sarang.torang.uistate.isLogin
 import com.sarang.torang.uistate.isUploading
 
 @Composable
 fun InputComment(
-    uiState: Comments,
+    comments: Comments,
     sendComment: () -> Unit,
     onCommentChange: (String) -> Unit,
     onClearReply: (() -> Unit)?,
@@ -27,10 +26,10 @@ fun InputComment(
     image: @Composable (Modifier, String, Dp?, Dp?, ContentScale?) -> Unit
 ) {
     Column {
-        if (uiState.reply != null)
+        if (comments.reply != null)
             ReplyComment(
-                profileImageUrl = uiState.reply.profileImageUrl,
-                uiState.reply.name,
+                profileImageUrl = comments.reply.profileImageUrl,
+                comments.reply.name,
                 onClearReply,
                 image = image
             )
@@ -42,16 +41,16 @@ fun InputComment(
 
         CommentTextField(
             modifier = Modifier.layoutId("inputComment"),
-            profileImageUrl = uiState.writer?.profileUrl ?: "",
+            profileImageUrl = comments.writer?.profileUrl ?: "",
             onSend = { sendComment() },
-            name = if (uiState.isLogin) "Add a comment for ${uiState.writer?.userName ?: ""}" else "로그인을 해주세요",
-            input = uiState.comment,
+            name = if (comments.isLogin) "Add a comment for ${comments.writer?.userName ?: ""}" else "로그인을 해주세요",
+            input = comments.comment,
             onValueChange = { onCommentChange(it) },
-            replyName = uiState.reply?.name,
-            isUploading = uiState.isUploading,
+            replyName = comments.reply?.name,
+            isUploading = comments.isUploading,
             requestFocus = requestFocus,
             image = image,
-            enabled = uiState.isLogin
+            enabled = comments.isLogin
         )
     }
 }
@@ -60,7 +59,7 @@ fun InputComment(
 @Composable
 fun PreviewInputComment() {
     InputComment(/*Preview*/
-        uiState = Comments().copy(
+        comments = Comments().copy(
             list = arrayListOf(
                 testComment(0),
                 testComment(1),
