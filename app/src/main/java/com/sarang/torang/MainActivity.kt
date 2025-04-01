@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
             val coroutine = rememberCoroutineScope()
             var showCommentDialog by remember { mutableStateOf(false) }
             var showComment by remember { mutableStateOf(false) }
-            var reviewId: Int? by remember { mutableStateOf(329) }
+            var reviewId: Int? by remember { mutableStateOf(null) }
 
 
             TorangTheme {
