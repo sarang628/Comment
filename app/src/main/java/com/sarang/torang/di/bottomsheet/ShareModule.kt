@@ -3,11 +3,10 @@ package com.sryang.torangbottomsheet.di.bottomsheet
 import androidx.compose.runtime.Composable
 import com.sarang.torang.BuildConfig
 import com.sarang.torang.api.ApiProfile
+import com.sarang.torang.data.bottomsheet.User
 import com.sarang.torang.data.dao.LoggedInUserDao
 import com.sarang.torang.session.SessionService
-import com.sryang.torang.compose.bottomsheet.share.ShareBottomSheetDialog
-import com.sryang.torang.data.User
-import com.sryang.torang.usecase.GetFollowerUseCase
+import com.sarang.torang.usecase.GetFollowerUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,10 +35,10 @@ class ShareModule {
 }
 
 fun provideShareBottomSheetDialog(): @Composable (onClose: () -> Unit) -> Unit = {
-    ShareBottomSheetDialog(
+    /*ShareBottomSheetDialog(
         profileServerUrl = BuildConfig.PROFILE_IMAGE_SERVER_URL,
         isExpand = true,
         onSelect = {},
         onClose = it
-    )
+    )*/
 }

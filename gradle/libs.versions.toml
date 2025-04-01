@@ -14,42 +14,50 @@ kotlinxSerializationJson = "1.6.3"
 composeBom = "2023.04.01"
 loggingInterceptor = "4.10.0"
 mockito = "3.11.2"
-navigationCompose = "2.8.0-alpha08"
-material3 = "1.2.1"
+navigationCompose = "2.8.0-beta04"
+material3 = "1.2.0-alpha10"
 retrofit = "2.9.0"
 room = "2.5.1"
-addReviewVersion = '268f368236'
+addReviewVersion = 'fca5418001'
 alarmVersion = 'a48ab79e8f'
-baseFeedVersion = '9c2542a90a'
+baseFeedVersion = 'c5f4705b5a'
 cardInfoVersion = "0ae8d4fd77"
-feedVersion = '6e6510dd41'
-profileVersion = 'e6c6dada54'
+feedVersion = '4183f5ab7f'
+profileVersion = '41d660f8fb'
 findingVersion = '47ad95d530'
-themeVersion = '28a1702347'
+themeVersion = '8fb60b535f'
 themesVersion = 'bdb00d9256'
 myReviewVersion = '7788b8d9f7'
 torangDetailVersion = '358de20325'
 loginVersion = 'ac5034132b'
 splashVersion = 'ea97b19733'
-torangRepositoryVersion = '1ab159fb0b'
+torangRepositoryVersion = 'ae427be611'
 settingsVersion = '06efa47b11'
 mapVersion = '7507c8c152'
-torangBottomSheetVersion = 'c84399fb7f'
-instaGramGalleryVersion = 'b506724857'
+torangBottomSheetVersion = '094b601c45'
+instaGramGalleryVersion = '4bfb2bff32'
 filterVersion = '7e8fc56f8a'
-mainVersion = '04e8b58fa5'
+mainVersion = '39d44e8ff5'
 reportVersion = 'bb52e7be2e'
 mediaContentResolverVersion = '54ff69ee3a'
-commentVersion = '13a0dff4c3'
-commonImageLoaderVersion = 'd0446c327d'
+commentVersion = '58b14bce0c'
+commonImageLoaderVersion = '9b2a552576'
 imagePagerVersion = '35b42a2392'
 torangImagePagerVersion = '7667c10f6d'
 likesScreenVersion = 'adb7eb7479'
 mUI3ScrollToRefreshVersion = '6daacb7290'
-bottomDetectLazyColunmVersion = '2486834b10'
+bottomDetectLazyColunmVersion = '8968918dca'
+chatVersion = 'ea29716da1'
+torangGridVersion = 'f31f7a31e6'
 expandableTextVersion = '547e79fc42'
 featureDeliveryVersion = "2.1.0"
 serialization = "1.7.10"
+media3Exoplayer = "1.4.0"
+media3Ui = "1.4.0"
+appcompatVersion = "1.7.0"
+materialVersion = "1.12.0"
+activityVersion = "1.9.2"
+constraintlayoutVersion = "2.1.4"
 
 # @formatter:off
 [libraries]
@@ -130,9 +138,18 @@ likes                           = { group = "com.github.sarang628", name = "Like
 mui3scrolltorefresh             = { group = "com.github.sarang628", name = "MUI3ScrollToRefresh",   version.ref = "mUI3ScrollToRefreshVersion" }
 expandableText                  = { group = "com.github.sarang628", name = "ExpandableText",        version.ref = "expandableTextVersion" }
 bottomdetectlazycolunm          = { group = "com.github.sarang628", name = "BottomDetectLazyColunm",version.ref = "bottomDetectLazyColunmVersion" }
+chat                            = { group = "com.github.sarang628", name = "Chat",                  version.ref = "chatVersion" }
+torangGrid                      = { group = "com.github.sarang628", name = "TorangGrid",            version.ref = "torangGridVersion" }
 themes                          = { group = "com.github.bingley1",  name = "Themes",                version.ref = "themesVersion" }
 feature-delivery                = { group = "com.google.android.play", name = "feature-delivery",   version.ref = "featureDeliveryVersion"}
 # @formatter:on
+
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3Exoplayer" }
+androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3Ui" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompatVersion" }
+material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activityVersion" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayoutVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
