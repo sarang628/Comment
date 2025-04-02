@@ -1,5 +1,7 @@
 package com.sarang.torang.compose.comments
 
+import android.util.Log
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,12 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +55,7 @@ import com.sarang.torang.data.comments.isSubComment
 import com.sarang.torang.data.comments.testComment
 import com.sarang.torang.data.comments.testSubComment
 import com.sarang.torang.data.comments.transFormComment
+import kotlinx.coroutines.launch
 
 @Composable
 fun Comment(
@@ -216,6 +223,7 @@ fun itemCommentConstraintSet(isSubComment: Boolean = false): ConstraintSet {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeToDismissComment(
     comment: Comment,
@@ -232,7 +240,7 @@ fun SwipeToDismissComment(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var confirm by remember { mutableStateOf(false) }
-    /*val state = rememberSwipeToDismissBoxState(
+    val state = rememberSwipeToDismissBoxState(
         positionalThreshold = { f -> 500f },
         confirmValueChange = { value ->
             if (value == SwipeToDismissBoxValue.EndToStart) {
@@ -242,8 +250,8 @@ fun SwipeToDismissComment(
             }
             true
         }
-    )*/
-    /*SwipeToDismissBox(
+    )
+    SwipeToDismissBox(
         state = state,
         enableDismissFromStartToEnd = false,
         enableDismissFromEndToStart = comment.userId == myId,
@@ -279,7 +287,7 @@ fun SwipeToDismissComment(
                 isLogin = isLogin
             )
         }
-    )*/
+    )
 }
 
 @Composable
