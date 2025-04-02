@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsModal(
+    modifier: Modifier = Modifier,
     viewModel: CommentViewModel = hiltViewModel(),
     reviewId: Int?,
     onDismissRequest: () -> Unit,
@@ -76,7 +77,9 @@ fun CommentsModal(
             })
 
             ModalBottomSheet(
-                sheetState = sheetState, onDismissRequest = onDismissRequest
+                modifier = modifier,
+                sheetState = sheetState,
+                onDismissRequest = onDismissRequest
             ) {
                 Column {
                     Scaffold(
@@ -134,7 +137,7 @@ fun CommentModalBody(
         Text(
             modifier = Modifier.layoutId("title"), text = "Comments", fontWeight = FontWeight.Bold
         )
-        CommentHelp(Modifier.layoutId("commentHelp"))
+        // CommentHelp(Modifier.layoutId("commentHelp"))
 
         if (uiState.list.isEmpty()) {
             EmptyComment(Modifier.layoutId("itemCommentList"))
@@ -236,7 +239,7 @@ fun commentsConstraintSet(): ConstraintSet {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewCommentModalBody() {
     CommentModalBody(/*Preview*/

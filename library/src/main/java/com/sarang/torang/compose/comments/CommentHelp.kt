@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun CommentHelp(modifie: Modifier = Modifier) {
     Column(modifie.padding(top = 5.dp, start = 10.dp, end = 10.dp)) {

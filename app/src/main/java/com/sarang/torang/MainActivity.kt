@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
@@ -18,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.zIndex
 import com.google.samples.apps.sunflower.ui.TorangTheme
 import com.sarang.torang.compose.comments.CommentsModal
 import com.sarang.torang.compose.comments.PreviewComments
@@ -82,13 +84,19 @@ class MainActivity : ComponentActivity() {
                     )
 
                     if (showCommentDialog) {
-                        CommentsModal(
-                            reviewId = reviewId,
-                            onDismissRequest = { showCommentDialog = false },
-                            image = provideTorangAsyncImage(),
-                            onImage = {},
-                            onName = {}
-                        )
+                        Box(Modifier.fillMaxSize())
+                        {
+                            CommentsModal(
+                                modifier = Modifier.zIndex(0f),
+                                reviewId = reviewId,
+                                onDismissRequest = { showCommentDialog = false },
+                                image = provideTorangAsyncImage(),
+                                onImage = {},
+                                onName = {}
+                            )
+                            Text("!!!!!!!!!!!!!!!!!!", modifier = Modifier.zIndex(1f))
+                        }
+
                     }
                 }
             }
