@@ -107,48 +107,63 @@ class CommentViewModel @Inject constructor(
     }
 
     fun sendComment() {
-        (uiState as CommentsUiState.Success).let {
-            if (it.comments.reply == null) {
-                viewModelScope.launch {
-                    try {
-                        sendCommentUseCase.invoke(
-                            reviewId = it.comments.reviewId!!,
-                            comment = it.comments.comment,
-                            onLocalUpdated = {
+        when (uiState) {
+            is CommentsUiState.Success -> {
+                (uiState as CommentsUiState.Success).let {
+                    if (it.comments.reply == null) {
+                        viewModelScope.launch {
+                            try {
+                                sendCommentUseCase.invoke(
+                                    reviewId = it.comments.reviewId!!,
+                                    comment = it.comments.comment,
+                                    onLocalUpdated = {
+                                        uiState = it.copy(
+                                            comments = it.comments.copy(
+                                                movePosition = 0, // 첫번째 위치로 이동
+                                                comment = "", // 입력창 초기화
+                                                reply = null, // 댓글 초기화
+                                            ),
+                                        )
+                                    })
+                            } catch (e: Exception) {
+                                Log.e(TAG, "failed send comment : ${e.message}")
+                                uiState =
+                                    it.copy(comments = it.comments.copy(snackBarMessage = e.message))
+                            }
+                        }
+
+                    } else {
+                        viewModelScope.launch {
+                            try {
+                                val uploadComment =
+                                    it.comments.reply ?: throw Exception("전송할 코멘트 정보가 없습니다.")
+                                sendReplyUseCase.invoke(
+                                    reviewId = it.comments.reviewId!!,
+                                    parentCommentId = it.comments.findRootCommentId(uploadComment),
+                                    comment = it.comments.comment,
+                                    onLocalUpdated = {})
                                 uiState = it.copy(
                                     comments = it.comments.copy(
-                                        movePosition = 0, // 첫번째 위치로 이동
                                         comment = "", // 입력창 초기화
                                         reply = null, // 댓글 초기화
-                                    ),
+                                    )
                                 )
-                            })
-                    } catch (e: Exception) {
-                        uiState = it.copy(comments = it.comments.copy(snackBarMessage = e.message))
+                            } catch (e: Exception) {
+                                Log.e(TAG, "failed send comment : ${e.message}")
+                                uiState =
+                                    it.copy(comments = it.comments.copy(snackBarMessage = e.message))
+                            }
+                        }
                     }
                 }
+            }
 
-            } else {
-                viewModelScope.launch {
-                    try {
-                        val uploadComment =
-                            it.comments.reply ?: throw Exception("전송할 코멘트 정보가 없습니다.")
-                        sendReplyUseCase.invoke(
-                            reviewId = it.comments.reviewId!!,
-                            parentCommentId = it.comments.findRootCommentId(uploadComment),
-                            comment = it.comments.comment,
-                            onLocalUpdated = {})
-                        uiState = it.copy(
-                            comments = it.comments.copy(
-                                comment = "", // 입력창 초기화
-                                reply = null, // 댓글 초기화
-                            )
-                        )
-                    } catch (e: Exception) {
-                        uiState = it.copy(comments = it.comments.copy(snackBarMessage = e.message))
-                        Log.e("_CommentViewModel", e.toString())
-                    }
-                }
+            CommentsUiState.Error -> {
+                Log.e(TAG, "fail send comment : CommentsUiState.Error")
+            }
+
+            CommentsUiState.Loading -> {
+                Log.e(TAG, "fail send comment : CommentsUiState.Loading")
             }
         }
     }
