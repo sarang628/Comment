@@ -17,8 +17,6 @@ BottomSheetScaffold는 시트 위에 위젯 배치가 가능해서,더 유연하
 고정된 input() 영역 구현은 간단.<br>
 Box로 감싼 후 input영역을 box하단에 배치
 
-<img src ="../screenshots/PreviewFixedInputBottomSheetScaffold.png" width="400">
-
 FixedInputBottomSheetScaffold.kt
 ```
 Box(modifier = modifier.imePadding()) { // edge to edge 에서 imePadding을 줘야 하단 영역이 적용됨
@@ -35,3 +33,4 @@ Box(modifier = modifier.imePadding()) { // edge to edge 에서 imePadding을 줘
         }
 }
 ```
+<img src ="../screenshots/PreviewFixedInputBottomSheetScaffold.png" width="400">
